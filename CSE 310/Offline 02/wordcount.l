@@ -1,16 +1,18 @@
 %option noyywrap
 %x Single_Comment_State
 %x Multi_Comment_State
+%x String_State
 %{
 #include<stdio.h>
 #include<stdlib.h>
 #include"SymbolTable.h"
 
 int word_count=0;
-int line_count=0;
+int line_count=1;
 int error_count=0;
-int comment_line=0;
 SymbolTable st(10);
+ofstream logout;
+ofstream tokenout;
 void IncWc(){
 	word_count++;
 }
@@ -25,100 +27,330 @@ mi{minus}
 Inc ({pl}|{mi})
 Id {Letter}({Letter}|{Digit})*
 End "*/"
+character (\'\\n\')|(\'\\t\')|(\'\\\\')|(\'\"\')|(\'\\a\')|(\'\\f\')|(\'\\r\')|(\'\\b\')|(\'\\v\')|(\'\\0\')
 Start [/][*]
-%%
-if                {printf("<IF>\n");}
-for               {printf("<FOR>\n");}
-do                {printf("<DO>\n");}
-int               {printf("<INT>\n");}
-float             {printf("<FLOAT>\n");}
-void              {printf("<VOID>\n");}
-switch            {printf("<SWITCH>\n");}
-default           {printf("<DEFAULT>\n");}
-else              {printf("<ELSE>\n");}
-while             {printf("<WHILE>\n");}
-break             {printf("<BREAK>\n");}
-char              {printf("<CHAR>\n");}
-double            {printf("<DOUBLE>\n");}
-return            {printf("<RETURN>\n");}
-case              {printf("<CASE>\n");}
-continue          {printf("<CONTINUE>\n");}
-{Digit}+          {printf("<CONST_INT,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("CONST_INT",yytext);
-                   st.insert(si);
+%%      
+if                {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"IF> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                   
                   }
-{Number}          {printf("<CONST_FLOAT,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);
+for               {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"FOR> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                   
                   }
-\'.\'             {printf("<CONST_CHAR,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("CONST_CHAR",yytext);
-                   st.insert(si);
+do                {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"DO> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                    
                   }
-{Inc}             {printf("<INCOP,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);
+int               {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"INT> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                     
                   }
-[+-]              {printf("<ADDOP,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);
+float             {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"FLOAT> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                     
                   }
-[*/%]             {printf("<MULOP,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);
+void              {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"VOID> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                     
                   }
-(<|<=|>|>=|==|!=) {printf("<RELOP,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);
+switch            {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"SWITCH> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                    
                   }
-[=]               {printf("<ASSIGNOP,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);
+default           {
+                   
+                        logout<<"Line no "<<line_count<<" Token : <"<<"DEFAULT> "<<"Lexeme : "<<yytext<<" found"<<endl;
+                    
                   }
-(&&|\|\||!)       {printf("<LOGICOP,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);
+else              {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"ELSE> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                         
                   }
-(\(|\))           {printf("<PAREN,%s>\n",yytext);
-                   SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);
+while             {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"WHILE> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                    
                   }
-(\{|\})           {printf("<CURL,%s>\n",yytext);
-SymbolInfo*si=new SymbolInfo("RELOP",yytext);
-                   st.insert(si);}
-(\[|\])           {printf("<BRACKET,%s>\n",yytext);}
-\,                {printf("<COMMA,%s>\n",yytext);} 
-\;                {printf("<SEMICOLON,%s>\n",yytext);}
-{Id}              {printf("<ID,%s>\n",yytext);}
+break             {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"BREAK>"<<"Lexeme : "<<yytext<<" found"<<endl; 
+                     
+                  }
+char              {
+                   
+                        logout<<"Line no "<<line_count<<" Token : <"<<"CHAR> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                    
+                  }
+double            {
+                   
+                        logout<<"Line no "<<line_count<<" Token : <"<<"DOUBLE> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                    
+                  }
+return            {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"RETURN> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                    
+                  }
+case              {
+                   
+                        logout<<"Line no "<<line_count<<" Token : <"<<"CASE> "<<"Lexeme : "<<yytext<<" found"<<endl;
+                     
+                  }
+continue          {
+                    
+                        logout<<"Line no "<<line_count<<" Token : <"<<"CONTINUE> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                   
+                  }
+{Digit}+          {
+                   if((st.insert("CONST_INT",yytext)).getI()==-1)
+	            {
+                         logout<<"Token <CONST_INT> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"CONST_INT> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+
+                  }
+{Number}          {
+                  
+                   if((st.insert("CONST_FLOAT",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <CONST_FLOAT> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"CONST_FLOAT> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);                   }
+                  }
+\'.\'|{character}   {
+                   
+                   if((st.insert("CONST_CHAR",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <CONST_CHAR> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"CONST_CHAR> "<<"Lexeme : "<<yytext<<" found"<<endl;
+                        st.print_not_empty(logout); 
+                   }
+                  }
+{Inc}             {
+                   
+                   if((st.insert("INCOP",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <INCOP> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"INCOP> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+[+-]              {
+                   
+                   if((st.insert("ADDOP",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <ADDOP> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"ADDOP> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+[*/%]             {
+                   
+                   if((st.insert("MULOP",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <MULOP> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"MULOP> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+(<|<=|>|>=|==|!=) {
+                   if((st.insert("RELOP",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <RELOP> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"RELOP> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+[=]               {
+                   if((st.insert("ASSIGNOP",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <ASSIGNOP> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"ASSIGNOP> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+(&&|\|\||!)       {
+                   if((st.insert("LOGICOP",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <LOGICOP> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"LOGICOP> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+(\(|\))           {
+                   if((st.insert("PAREN",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <PAREN> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"PAREN> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+(\{|\})           {
+                   
+                   if((st.insert("CURL",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <CURL> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"CURL> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+(\[|\])           {
+                   if((st.insert("BRACKET",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <BRACKET> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"BRACKET> "<<"Lexeme : "<<yytext<<" found"<<endl;
+                        st.print_not_empty(logout); 
+                   }
+                  }
+\,                {
+                   if((st.insert("COMMA",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <COMMA> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"COMMA> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  } 
+\;                {
+                   if((st.insert("SEMICOLON",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <SEMICOLON> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"SEMICOLON> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+{Id}              {
+                   if((st.insert("ID",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <ID> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"ID> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
 \/\/              {BEGIN Single_Comment_State;}
 <Single_Comment_State>.*                                 {BEGIN INITIAL;
-                                                          printf("Single Comment %s\n",yytext);
+                                                          
+                                                          logout<<"Line no "<<line_count<<" Token : <"<<"COMMENT> "<<"Lexeme : "<<yytext<<" found"<<endl; 
                                                          }
 {Start}                                                  {BEGIN Multi_Comment_State;
-                                                          printf("Start\n");
+                                                          
+                                                          logout<<"Line no "<<line_count<<" Token : <"<<"COMMENT> "; 
                                                          }
-<Multi_Comment_State><<EOF>>                             {printf("Error Comment not Ended in line %d\n",line_count);
+<Multi_Comment_State><<EOF>>                             {
+                                                          error_count++;
+                                                          logout<<"Line no "<<line_count<<" Error : Unterminated comment error"<<endl;
                                                           return 0;
                                                          }
-<Multi_Comment_State>[a-zA-z0-9]                         {printf("%s",yytext);}
+<Multi_Comment_State>[a-zA-z0-9 ]                       {
+                                                            logout<<yytext;
+                                                         }
 <Multi_Comment_State>[\n]                                {line_count++;
-                                                           printf("%s",yytext);
+                                                           
+                                                           logout<<yytext;
                                                          }
 <Multi_Comment_State>{End}                               {BEGIN INITIAL;
-                                                          printf("Got end\n");
+                                                          
+                                                          logout<<"found"<<endl;
                                                          }
-\"([^\"])*\"	                                         {printf("<STRING,%s>\n",yytext);}
+\"                                                       {BEGIN String_State;
+                                                          logout<<"Token <String> Lexeme \"";         
+                                                         }
+<String_State>([a-zA-Z0-9 ])*	                                 {logout<<yytext;}   
+<String_State>\n                                         {line_count++;
+                                                          logout<<yytext;
+                                                         }
+<String_State><<EOF>>                                    {
+                                                           error_count++;
+                                                           logout<<"Line no "<<line_count<<" Error : Unterminated string error"<<endl;
+                                                           return 0;
+                                                         }
+<String_State>[\"]                                         {BEGIN INITIAL;
+                                                          logout<<"\" found"<<endl;
+                                                         }
+                                                         
 [\n]                                                     {line_count++;}
-({Digit}+\.{Digit}+\.).*                                 {printf("Too many decimal point Error in line %d\n",line_count+1);}
-({Digit}+(\.{Digit}+)?(E[+-]{Digit}*\..*))               {printf("Ill formed number in line%d\n",line_count+1);}
-({Digit}+{Letter}+)                                      {printf("Invalid prefix in line %d\n",line_count+1);}
-('..+')                                                  {printf("Multi charecter constant error in line %d\n",line_count+1);}
-\"([^\"])*                                               {printf("Unfinished string error in line %d\n",line_count+1);}
-^.                                                       {printf("Unrecognized charecter error in line %d\n",line_count+1);}
-<<EOF>>                                                  {printf("Total Line Number: %d and word number: %d\n",line_count,word_count);
-st.print();
+({Digit}*\.+{Digit}+\.)({Digit}|\.)*                        {
+                                                          error_count++;
+                                                          logout<<"Line no "<<line_count<<" Error : Too many decimal point"<<endl;
+                                                         }
+({Digit}+(\.{Digit}+)?(E[+-]?)+{Digit}+\.+(E[+-]?|{Digit}|\.)*)  {
+                                                           error_count++;
+                                                           logout<<"Line no "<<line_count<<" Error : Ill formed number"<<endl;
+                                                         }
+({Digit}+{Letter}+)                                      {
+                                                           error_count++;
+                                                           logout<<"Line no "<<line_count<<" Error : Invalid prefix"<<endl;
+                                                         }
+\'([a-zA-Z0-9 ])*                                              {
+                                                           error_count++;
+                                                           logout<<"Line no "<<line_count<<" Error : Unterminated Character"<<endl; 
+                                                         }
+(\'..+\')                                                {
+                                                           error_count++;
+                                                           logout<<"Line no "<<line_count<<" Error : Multi charecter constant"<<endl;
+                                                         }
+
+<<EOF>>                                                  {
+                                                          st.print(tokenout);
+                                                          logout<<"Total lines : "<<line_count-1<<endl
+<<"Total errors : "<<error_count<<endl;
                                                           return 0;
                                                          }
+
 %%
 
 int main(int argc,char *argv[]){
@@ -134,9 +366,12 @@ int main(int argc,char *argv[]){
 		return 0;
 	}
 	
-
+        logout.open("log.txt");
+	tokenout.open("token.txt");
 	yyin= fin;
 	yylex();
 	fclose(yyin);
+	tokenout.close();
+        logout.close();
 	return 0;
 }
