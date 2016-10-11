@@ -2,10 +2,11 @@
 %x Single_Comment_State
 %x Multi_Comment_State
 %x String_State
+%x Again
 %{
 #include<stdio.h>
 #include<stdlib.h>
-#include"SymbolTable.h"
+#include"1305117_SymbolTable.h"
 
 int word_count=0;
 int line_count=1;
@@ -15,6 +16,10 @@ ofstream logout;
 ofstream tokenout;
 void IncWc(){
 	word_count++;
+}
+void print_message(){
+          logout<<"Total lines : "<<line_count-1<<endl<<"Total errors : "<<error_count<<endl;
+          st.print(tokenout);
 }
 %}
 Letter [a-zA-Z]
@@ -28,6 +33,7 @@ Inc ({pl}|{mi})
 Id {Letter}({Letter}|{Digit})*
 End "*/"
 character (\'\\n\')|(\'\\t\')|(\'\\\\')|(\'\"\')|(\'\\a\')|(\'\\f\')|(\'\\r\')|(\'\\b\')|(\'\\v\')|(\'\\0\')
+other [\n]
 Start [/][*]
 %%      
 if                {
@@ -288,14 +294,15 @@ continue          {
                                                          }
 {Start}                                                  {BEGIN Multi_Comment_State;
                                                           
-                                                          logout<<"Line no "<<line_count<<" Token : <"<<"COMMENT> "; 
+                                                          logout<<"Line no "<<line_count<<" Token : <"<<"COMMENT> Lexeme :"; 
                                                          }
 <Multi_Comment_State><<EOF>>                             {
                                                           error_count++;
                                                           logout<<"Line no "<<line_count<<" Error : Unterminated comment error"<<endl;
+                                                          print_message();
                                                           return 0;
                                                          }
-<Multi_Comment_State>[a-zA-z0-9 ]                       {
+<Multi_Comment_State>([ -~]{-}[\n\*\/])*                 {
                                                             logout<<yytext;
                                                          }
 <Multi_Comment_State>[\n]                                {line_count++;
@@ -307,18 +314,27 @@ continue          {
                                                           logout<<"found"<<endl;
                                                          }
 \"                                                       {BEGIN String_State;
-                                                          logout<<"Token <String> Lexeme \"";         
+                                                          logout<<"Token <String> Lexeme ";         
                                                          }
-<String_State>([a-zA-Z0-9 ])*	                                 {logout<<yytext;}   
-<String_State>\n                                         {line_count++;
-                                                          logout<<yytext;
-                                                         }
-<String_State><<EOF>>                                    {
-                                                           error_count++;
-                                                           logout<<"Line no "<<line_count<<" Error : Unterminated string error"<<endl;
-                                                           return 0;
-                                                         }
-<String_State>[\"]                                         {BEGIN INITIAL;
+<String_State>([ -~]{-}[\"\n\\])*	                {logout<<yytext;}   
+<String_State>\\                                        {
+                                                          BEGIN Again;
+                                                         
+                                                        }
+<Again>\n                                               {
+
+                                                          line_count++;
+                                                          
+                                                          BEGIN String_State;
+                                                        }
+<String_State>\n                                        {
+                                                          line_count++;
+                                                          error_count++;
+                                                          logout<<" Line no "<<line_count<<" Error : Unterminated string error"<<endl;
+                                                          BEGIN INITIAL;
+                                                        }
+
+<String_State>[\"]                                       {BEGIN INITIAL;
                                                           logout<<"\" found"<<endl;
                                                          }
                                                          
@@ -345,9 +361,7 @@ continue          {
                                                          }
 
 <<EOF>>                                                  {
-                                                          st.print(tokenout);
-                                                          logout<<"Total lines : "<<line_count-1<<endl
-<<"Total errors : "<<error_count<<endl;
+                                                          print_message();
                                                           return 0;
                                                          }
 
@@ -366,8 +380,8 @@ int main(int argc,char *argv[]){
 		return 0;
 	}
 	
-        logout.open("log.txt");
-	tokenout.open("token.txt");
+        logout.open("1305117_log.txt");
+	tokenout.open("1305117_token.txt");
 	yyin= fin;
 	yylex();
 	fclose(yyin);
