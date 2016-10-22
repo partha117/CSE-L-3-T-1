@@ -220,37 +220,71 @@ continue          {
                         st.print_not_empty(logout);
                    }
                   }
-(\(|\))           {
-                   if((st.insert("PAREN",yytext)).getI()==-1)
+(\()           {
+                   if((st.insert("LPAREN",yytext)).getI()==-1)
 	            {
-                        logout<<"Token <PAREN> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+                        logout<<"Token <LPAREN> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
          	    }
                    else
                    {
-                        logout<<"Line no "<<line_count<<" Token : <"<<"PAREN> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        logout<<"Line no "<<line_count<<" Token : <"<<"LPAREN> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                }
+(\))             {
+                   if((st.insert("RPAREN",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <RPAREN> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"RPAREN> "<<"Lexeme : "<<yytext<<" found"<<endl; 
                         st.print_not_empty(logout);
                    }
                   }
-(\{|\})           {
+(\{)         {
                    
-                   if((st.insert("CURL",yytext)).getI()==-1)
+                   if((st.insert("LCURL",yytext)).getI()==-1)
 	            {
-                        logout<<"Token <CURL> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+                        logout<<"Token <LCURL> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
          	    }
                    else
                    {
-                        logout<<"Line no "<<line_count<<" Token : <"<<"CURL> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        logout<<"Line no "<<line_count<<" Token : <"<<"LCURL> "<<"Lexeme : "<<yytext<<" found"<<endl; 
                         st.print_not_empty(logout);
                    }
                   }
-(\[|\])           {
-                   if((st.insert("BRACKET",yytext)).getI()==-1)
+(\})         {
+                   
+                   if((st.insert("RCURL",yytext)).getI()==-1)
 	            {
-                        logout<<"Token <BRACKET> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+                        logout<<"Token <RCURL> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
          	    }
                    else
                    {
-                        logout<<"Line no "<<line_count<<" Token : <"<<"BRACKET> "<<"Lexeme : "<<yytext<<" found"<<endl;
+                        logout<<"Line no "<<line_count<<" Token : <"<<"RCURL> "<<"Lexeme : "<<yytext<<" found"<<endl; 
+                        st.print_not_empty(logout);
+                   }
+                  }
+(\[)          {
+                   if((st.insert("LBRACKET",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <LBRACKET> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"LBRACKET> "<<"Lexeme : "<<yytext<<" found"<<endl;
+                        st.print_not_empty(logout); 
+                   }
+                  }
+(\])          {
+                   if((st.insert("RBRACKET",yytext)).getI()==-1)
+	            {
+                        logout<<"Token <RBRACKET> Lexeme : "<<yytext<<" found in line "<<line_count<<" already exist in Symobol Table"<<endl;
+         	    }
+                   else
+                   {
+                        logout<<"Line no "<<line_count<<" Token : <"<<"RBRACKET> "<<"Lexeme : "<<yytext<<" found"<<endl;
                         st.print_not_empty(logout); 
                    }
                   }
@@ -314,15 +348,19 @@ continue          {
                                                           logout<<"found"<<endl;
                                                          }
 \"                                                       {BEGIN String_State;
-                                                          logout<<"Token <String> Lexeme ";         
+                                                          logout<<"Token <String> Lexeme \"";         
                                                          }
-<String_State>([ -~]{-}[\"\n\\])*	                {logout<<yytext;}   
+<String_State>([a-zA-Z0-9 ,\.;\'\[\]\-\=\+\*\>/</:/|/{/}])* {logout<<yytext;}   
+<String_State>(\\t)                                        {logout<<yytext;}
+<String_State>(\\\\)                                        {logout<<"\\";}
+
 <String_State>\\                                        {
                                                           BEGIN Again;
                                                          
                                                         }
 <Again>\n                                               {
 
+                                                          
                                                           line_count++;
                                                           
                                                           BEGIN String_State;
@@ -364,6 +402,7 @@ continue          {
                                                           print_message();
                                                           return 0;
                                                          }
+[.]                                                      {logout<<"Line no "<<line_count<<" Error : Unrecognized character"<<endl;}
 
 %%
 
