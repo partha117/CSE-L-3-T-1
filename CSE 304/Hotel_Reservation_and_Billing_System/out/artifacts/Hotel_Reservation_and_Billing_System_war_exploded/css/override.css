@@ -1,0 +1,12 @@
+.simpleinput{
+  outline: none;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 1px solid gainsboro;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+} 
+.table-no-border th, .table-no-border td { 
+  border-top: none !important; 
+}
