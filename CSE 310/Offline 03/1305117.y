@@ -17,6 +17,7 @@ char * globalType;
 int errorCounter=0;
 void yyerror(const char *s){
 	//printf("%s\n",s);
+  tokenout<<"\n"<<"Eror: "<<s<<"  at line "<<line_count<<endl;
 }
 
 int yylex(void);
@@ -267,12 +268,12 @@ expression_statement  : SEMICOLON  {tokenout<<"\n"<<"expression_statement:SEMICO
                               delete $1;
                               } 
       |expression error{tokenout<<"\n"<<"expression_statement:expression error"<<endl;
-                              tokenout<<"\n"<<"Error: Semicolon missing at line "<<line_count<<endl;
+                              //tokenout<<"\n"<<"Error: Semicolon missing at line "<<line_count<<endl;
                               errorCounter++;
                               delete $1;
                       }
       |error{
-              tokenout<<"\n"<<"Eror: Semicolon missing at line "<<line_count<<endl;
+              //tokenout<<"\n"<<"Eror: Semicolon missing at line "<<line_count<<endl;
               errorCounter++;
             }
       ;
@@ -530,6 +531,14 @@ term :  unary_expression  {
                                     {
                                       $$=new SymbolInfo();
                                       $$->setValue(($1->getValue())*($3->getValue()));
+                                      if((strcmp($1->getType(),"float")==0)||((strcmp($3->getType(),"float")==0)))
+                                        {
+                                          $$->setType("float");
+                                        }
+                                        else
+                                        { 
+                                          $$->setType("int");
+                                        }
                                     }
                                     else
                                     {
@@ -538,6 +547,7 @@ term :  unary_expression  {
                                         //printf("here1");
                                         $$=new SymbolInfo();
                                         $$->setValue(((int)$1->getValue())%((int)$3->getValue()));
+                                        $$->setType("int");
 
                                       }
                                       else

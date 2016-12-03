@@ -19,7 +19,7 @@ void yyerror(char *);
 
 
 int word_count=0;
-int line_count=0;
+int line_count=1;
 int error_count=0;
 
 void IncWc(){
