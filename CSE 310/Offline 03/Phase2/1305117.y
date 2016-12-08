@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include<string>
+#include<cstdlib>
+#include<sstream>
 #include"1305117_SymbolTable.h"
 //#define YYSTYPE SymbolInfo      /* yyparse() stack type */
 extern FILE* yyin;
@@ -21,6 +23,120 @@ string showProc="OUTPUT PROC\n PUSH AX\nPUSH BX\nPUSH CX\nPUSH DX\nPUSH VAR1\n\n
     MOV VAR1,DX\nMOV DL,AL \nADD DL,'0'\nMOV AH,2\nINT 21H\nMOV DX,0\nMOV AX,CX \nDIV DIVISOR\nMOV CX,AX \nCMP CX,0 \nJE END_OF_OUTPUT \nMOV DX,0\n\
     MOV AX,VAR1\nDIV CX\nJMP SECOND_DIVISION\nEND_OF_OUTPUT:\nMOV DL,0DH\nMOV AH,2\nINT 21H\nMOV DL,0AH\nINT 21H\nPOP VAR1\nPOP DX\nPOP CX\
    \nPOP BX\nPOP AX\nRET\nOUTPUT ENDP";
+
+
+
+ int c=0;
+string* mytokener(string st)
+{
+    //cout<<st<<endl;
+    char *as=(char*)(st.c_str());
+    int len=strlen(as);
+    string *temp=new string[5];
+    char *temp1=(char*)malloc((sizeof(char))*3);
+    c=0;
+    int j=0;
+    for(int i=0;i<len;i++)
+    {
+        if((as[i]==' ')||(as[i]==','))
+        {
+            temp1[j]='\0';
+            if(strlen(temp1)!=0)
+            {
+               temp[c]=string(temp1);
+                j=0;
+                c++;
+            }
+        }
+        else
+        {
+          temp1[j]=as[i];
+          j++;
+        }
+
+    }
+    temp1[j]='\0';
+    temp[c]=string(temp1);
+    c++;
+    /*for(int i=0;i<c;i++)
+    {
+        cout<<temp[i]<<endl;
+    }*/
+
+    return temp;
+}
+string optimizer(string st)
+{
+    string optimized;
+
+    istringstream iss(st);
+
+        string line;
+        string line2;
+        string prevline;
+
+        int check=0;
+        int prevc,newc;
+        int jump=0;
+        int addins=0;
+        for(;getline(iss,line);)
+        {
+            string newline;
+            newline=line;
+            jump=0;
+            addins=0;
+
+
+            if(check==1)
+            {
+                string *arr1=mytokener(prevline);
+                string *arr2=mytokener(newline);
+                if((arr1[0]==arr2[0])&&(arr1[0]=="mov")&&(arr1[1]==arr2[2])&&(arr1[2]==arr2[1]))
+                {
+                    check=0;
+                    jump=1;
+                }
+                else if(arr1[0]=="mov")
+                {
+                    optimized=optimized+"\n"+prevline;
+                }
+
+            }
+            if(jump==0)
+            {
+
+                string *arr3=mytokener(newline);
+                if((arr3[0]=="add")&&(arr3[2]=="0"))
+                {
+
+                }
+                else if((arr3[0]=="mul")&&(arr3[1]=="1"))
+                {
+
+                }
+                else if(arr3[0]!="mov")
+                {
+                    optimized=optimized+"\n"+newline;
+                    addins=1;
+
+                }
+
+                prevline=newline;
+                check=1;
+
+            }
+
+
+
+
+        }
+        if((check!=0)&&(addins!=1))
+        {
+            optimized=optimized+"\n"+prevline;
+        }
+        return optimized;
+
+}
 void yyerror(const char *s){
 	//printf("%s\n",s);
   tokenout<<"\n"<<"Eror: "<<s<<"  at line "<<line_count<<endl;
@@ -54,6 +170,7 @@ char *newTemp()
   alltemp=alltemp+string(t)+" dw ?\n";
   return t;
 }
+string notop;
 
 
 %}
@@ -116,6 +233,9 @@ Program : INT MAIN LPAREN RPAREN compound_statement
 			ofstream fout;
 			fout.open("code.asm");
 			fout << $$->gcode;
+			ofstream fout1;
+			fout1.open("notoptimized.asm");
+			fout1<<notop;
 		}
          ;
 
@@ -124,7 +244,8 @@ Program : INT MAIN LPAREN RPAREN compound_statement
 compound_statement : LCURL var_declaration statements RCURL {//printf("Now in comp_state \n");
                                                               tokenout<<"\n"<<"compound_statement: Lcurl var declaration statements RCURL"<<endl;
                                                               $$=new SymbolInfo();
-    	                                                      $$->gcode=".model small\n.stack 100H\n.data\n"+alltemp+$2->gcode+".code\n"+showProc+"\nMAIN PROC\n"+$3->gcode+"main endp\n";
+    	                                                      $$->gcode=".model small\n.stack 100H\n.data\n"+alltemp+$2->gcode+".code\n"+showProc+"\nMAIN PROC\n"+optimizer($3->gcode)+"main endp\n";
+    	                                                      notop=".model small\n.stack 100H\n.data\n"+alltemp+$2->gcode+".code\n"+showProc+"\nMAIN PROC\n"+$3->gcode+"main endp\n";
                                                             }
        | LCURL statements RCURL{//printf("compound_statement\n");
                                   tokenout<<"\n"<<"compound_statements:Lcurl statements RCURL"<<endl;
