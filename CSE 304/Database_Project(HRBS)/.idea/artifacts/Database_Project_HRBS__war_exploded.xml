@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="Database_Project(HRBS):war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/Database_Project_HRBS__war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="Database_Project(HRBS)/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Database_Project(HRBS)" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
