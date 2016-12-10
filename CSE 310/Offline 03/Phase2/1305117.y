@@ -18,8 +18,7 @@ int nowType=1;
 char * globalType;
 int errorCounter=0;
 string alltemp="";
-string showProc="OUTPUT PROC\n PUSH AX\nPUSH BX\nPUSH CX\nPUSH DX\nPUSH VAR1\n\nMOV DX,0\nMOV DIVISOR,10\nMOV CX,10000\nFIRST_DIVISION:\nDIV CX\n\\\
-    CMP AX,0\nJNE SECOND_DIVISION\nMOV VAR1,DX\nMOV DX,0\nMOV AX,CX \nDIV DIVISOR\nMOV CX,AX\nMOV AX,VAR1\nJMP FIRST_DIVISION \nSECOND_DIVISION:\n\
+string showProc="OUTPUT PROC\n PUSH AX\nPUSH BX\nPUSH CX\nPUSH DX\nPUSH VAR1\n\nMOV DX,0\nMOV DIVISOR,10\nMOV CX,10000\nFIRST_DIVISION:\nDIV CX\n\CMP AX,0\nJNE SECOND_DIVISION\nMOV VAR1,DX\nMOV DX,0\nMOV AX,CX \nDIV DIVISOR\nMOV CX,AX\nMOV AX,VAR1\nJMP FIRST_DIVISION \nSECOND_DIVISION:\n\
     MOV VAR1,DX\nMOV DL,AL \nADD DL,'0'\nMOV AH,2\nINT 21H\nMOV DX,0\nMOV AX,CX \nDIV DIVISOR\nMOV CX,AX \nCMP CX,0 \nJE END_OF_OUTPUT \nMOV DX,0\n\
     MOV AX,VAR1\nDIV CX\nJMP SECOND_DIVISION\nEND_OF_OUTPUT:\nMOV DL,0DH\nMOV AH,2\nINT 21H\nMOV DL,0AH\nINT 21H\nPOP VAR1\nPOP DX\nPOP CX\
    \nPOP BX\nPOP AX\nRET\nOUTPUT ENDP";
@@ -244,8 +243,8 @@ Program : INT MAIN LPAREN RPAREN compound_statement
 compound_statement : LCURL var_declaration statements RCURL {//printf("Now in comp_state \n");
                                                               tokenout<<"\n"<<"compound_statement: Lcurl var declaration statements RCURL"<<endl;
                                                               $$=new SymbolInfo();
-    	                                                      $$->gcode=".model small\n.stack 100H\n.data\n"+alltemp+$2->gcode+".code\n"+showProc+"\nMAIN PROC\n"+optimizer($3->gcode)+"main endp\n";
-    	                                                      notop=".model small\n.stack 100H\n.data\n"+alltemp+$2->gcode+".code\n"+showProc+"\nMAIN PROC\n"+$3->gcode+"main endp\n";
+    	                                                      $$->gcode=".model small\n.stack 100H\n.data\n"+alltemp+"DIVISOR DW ?\nTOTAL DW ? \nVAR1 DW ?\n"+$2->gcode+".code\n"+"\nMAIN PROC\n"+"mov ax,@data\nmov ds,ax\n"+optimizer($3->gcode)+"main endp\n"+showProc;
+    	                                                      notop=".model small\n.stack 100H\n.data\n"+alltemp+$2->gcode+".code\n"+"\nMAIN PROC\n"+$3->gcode+"\nmain endp\n"+showProc;
                                                             }
        | LCURL statements RCURL{//printf("compound_statement\n");
                                   tokenout<<"\n"<<"compound_statements:Lcurl statements RCURL"<<endl;
@@ -453,7 +452,7 @@ statement  : expression_statement {//printf("Now in statement expstate first\n")
      	tokenout<<"\n"<<"statement:IF LPAREN expression RPAREN statement"<<endl;
      				$$=new SymbolInfo();
      				char *label=newLabel();
-					$$->gcode=$$->gcode+"mov ax, "+string($3->getName())+"\n";
+					$$->gcode=$$->gcode+$3->gcode+"mov ax, "+string($3->getName())+"\n";
 					$$->gcode=$$->gcode+"cmp ax, 1\n"+"jne "+string(label)+"\n"+$5->gcode+string(label)+":\n";
      	delete $3;
      } %prec LOWER_THAN_ELSE;
@@ -463,9 +462,9 @@ statement  : expression_statement {//printf("Now in statement expstate first\n")
      	$$=new SymbolInfo();
      				char *label1=newLabel();
      				char *label2=newLabel();
-					$$->gcode=$$->gcode+"mov ax, "+string($3->getName())+"\n";
+					$$->gcode=$$->gcode+$3->gcode+"mov ax, "+string($3->getName())+"\n";
 					$$->gcode=$$->gcode+"cmp ax, 1\n"+"jne "+string(label1)+"\n"+$5->gcode+"jmp "+string(label2);
-					$$->gcode=$$->gcode+string(label1)+":\n"+$7->gcode+string(label2)+":\n";
+					$$->gcode=$$->gcode+"\n"+string(label1)+":\n"+$7->gcode+string(label2)+":\n";
      	delete $3;
      }
      | WHILE LPAREN expression RPAREN statement 
@@ -522,7 +521,7 @@ statement  : expression_statement {//printf("Now in statement expstate first\n")
      									$$=new SymbolInfo();
      									$$->setValue($2->getValue());
                               			$$->setType($2->getType());
-     								    $$->gcode=$2->gcode+"mov ah,4ch\n int 21h\n";
+     								    $$->gcode=$2->gcode+"mov ah,4ch\n int 21h\n\n";
      							   		delete $2;}
      ;
     
@@ -604,6 +603,7 @@ variable : ID    { //printf(" Now in variable rule Id first id name  %s\n",$1->g
                                       $$=(temp1->getArrayObject((int)$3->getValue()));
                                       $$->gcode=$1->gcode;
                                       $$->setName($1->getName());
+                                      $$->setindexholder($3->getValue());
                                    }
                                  }
                                }
@@ -658,7 +658,7 @@ expression : logic_expression {$$=new SymbolInfo();
                                 					$$->gcode=$$->gcode+"add di,"+sstm.str()+"\n";
 
 	                       						}
-	                       						$$->gcode=$$->gcode+"move [di],ax \n";
+	                       						$$->gcode=$$->gcode+"mov [di],ax \n";
 	                       						$$->setindexholder($$->getindexholder());
 
                                               }
@@ -828,7 +828,7 @@ rel_expression  : simple_expression  {
                                                   
                                                  }
                                                  $$->gcode=$$->gcode+"mov "+string(temp)+",0\n"+"jmp "+string(label2)+"\n";
-                                                 $$->gcode=$$->gcode+string(label1)+":\nmov"+string(temp)+",1\n"+string(label2);
+                                                 $$->gcode=$$->gcode+string(label1)+":\nmov "+string(temp)+",1\n"+string(label2);
                                                  $$->gcode=$$->gcode+":\n";
                                                 
                                                  $$->setName(temp);
@@ -1067,7 +1067,8 @@ factor  : variable   {    //printf("Now in factor rule variable first \n");
 
 	                       }
 	                       char *temp= newTemp();
-	                       $$->gcode=$$->gcode+"mov "+string(temp)+", [di]\n";
+	                       $$->gcode="push ax\nmov ax,[di]\n";
+	                       $$->gcode=$$->gcode+"mov "+string(temp)+", ax\npop ax\n";
 	                       $$->setName(temp);
 	                       $$->setindexholder();
 	                       
