@@ -42,8 +42,8 @@
 
             <div class="col-md-4">
                 <select name="Speciality",type="text">
-                    <option  value="Sea_facing">Sea facing</option>
-                    <option  value="Garden_facing">Garden facing</option>
+                    <option  value="Sea facing">Sea facing</option>
+                    <option  value="Garden facing">Garden facing</option>
                     <option  value="No Speciality">No Speciality</option>
                 </select>
             </div>
@@ -68,11 +68,11 @@
             </div>
 
             <div class="col-md-5">
-                <input type="radio" name="Airconditioned" value="Airconditioned"> Air Conditioned
+                <input type="radio" name="Airconditioned" value="YES"> Air Conditioned
             </div>
 
             <div class="col-md-5">
-                <input type="radio" name="Wifi" value="Wifi"> Unlimited Wifi
+                <input type="radio" name="Wifi" value="YES"> Unlimited Wifi
             </div>
         </div>
         <br>
@@ -133,7 +133,7 @@
         </div>
     </div>
     <br>
-    <div class="col-md-12">
+    <div class="col-md-7">
         <button class="btn add-btn" style="float: right">Find</button>
     </div>
 </div>

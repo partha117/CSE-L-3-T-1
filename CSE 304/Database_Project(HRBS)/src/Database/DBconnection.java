@@ -1,5 +1,6 @@
 package Database;
 
+import Utility.Facility;
 import Utility.Room;
 
 import java.sql.*;
@@ -83,49 +84,47 @@ public class DBconnection {
         return false;
 
     }
-    private  String dateConverter(String  st)
+    public ArrayList<Facility> getFacility(String facility, String  date)
     {
-        String converted;
-        String [] temp;
-        temp=st.split("-");
-        converted=temp[2]+"/"+temp[1]+"/"+temp[0];
-        return converted;
+        PreparedStatement statement=null;
+        ArrayList<Facility> arrayList=new ArrayList<>();
+
+            String query="SELECT FACILITY_ID,PRICE FROM FACILITY WHERE FACILITY_TYPE = '"+facility+
+                    "'AND FACILITY_ID NOT IN (SELECT FACILITY_ID FROM FACILITY_BOOKING WHERE BOOKING_ID IN(SELECT  BOOKING_ID FROM BOOKING WHERE DATE_FROM =TO_DATE('"+date+"','YYYY-MM-DD')))";
+
+        try {
+            statement=conn.prepareStatement(query);
+            System.out.println("it is");
+            ResultSet rs=statement.executeQuery();
+            for(int i=0;rs.next();i++)
+            {
+                arrayList.add(new Facility(rs.getString("FACILITY_ID"),facility,rs.getDouble("PRICE")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  arrayList;
 
     }
+
     public ArrayList<Room> getRoomList(String sp, String  cap, String ac, String wifi, String pf, String pt, String  df, String  dt)
     {
         ArrayList<Room> room=new ArrayList<>();
         PreparedStatement statement=null;
-        String  temp1=dateConverter(df);
-        String  temp2=dateConverter(dt);
-        if(ac.compareTo("Airconditioned")==0)
-        {
-            ac="YES";
-        }
-        else
-        {
-            ac="NO";
-        }
-        if(wifi.compareTo("Wifi")==0)
-        {
-            wifi="YES";
-        }
-        else
-        {
-            wifi="NO";
-        }
+
+
 
 
         try {
 
             System.out.println("<h1>"+sp+cap+ac+wifi+pf+pt+df+dt+"</h1>");
-            String  query="SELECT ROOM_NO,SPECALITY,ROOM_COST FROM ROOM WHERE CAPACITY ='"+cap+"' AND SPECALITY ='"+sp+"'AND AIR_CONDITIONER ='"+ac+"' AND WI_FI = '"+wifi+"'  AND STATUS ='VACCANT' AND (" +
+            String  query="SELECT ROOM_NO,SPECALITY,ROOM_COST FROM ROOM WHERE CAPACITY ='"+cap+"' AND SPECALITY ='"+sp+"'AND AIR_CONDITIONER ='"+ac+"' AND WI_FI = '"+wifi+"'  AND (" +
                     "ROOM_COST BETWEEN "+pf +
                     " AND "+pt +
                     ")" +
-                    "AND ROOM_BOOKING_ID NOT IN (SELECT BOOKING_ID FROM BOOKING WHERE(DATE_FROM = TO_DATE ('"+temp1+"' , 'DD/MM/YYYY')AND DATE_TO = TO_DATE ('"+temp2+"' , 'DD/MM/YYYY'))" +
-                    "OR(DATE_FROM BETWEEN TO_DATE ('"+temp1+"' , 'DD/MM/YYYY')AND TO_DATE ('"+temp2+"' , 'DD/MM/YYYY'))OR (DATE_FROM BETWEEN TO_DATE ('"+temp1+"' , 'DD/MM/YYYY')" +
-                    "AND TO_DATE ('"+temp2+"' , 'DD/MM/YYYY')))";
+                    "AND ROOM_NO NOT IN (SELECT  ROOM_NO FROM ROOM_BOOKING WHERE BOOKING_ID IN(SELECT BOOKING_ID FROM BOOKING WHERE(DATE_FROM = TO_DATE ('"+df+"' , 'YYYY-MM-DD')AND DATE_TO = TO_DATE ('"+dt+"' , 'YYYY-MM-DD'))" +
+                    "OR(DATE_FROM BETWEEN TO_DATE ('"+df+"' , 'YYYY-MM-DD')AND TO_DATE ('"+dt+"' , 'YYYY-MM-DD'))OR (DATE_TO BETWEEN TO_DATE ('"+df+"' , 'YYYY-MM-DD')" +
+                    "AND TO_DATE ('"+dt+"' , 'YYYY-MM-DD'))))";
             statement=conn.prepareStatement(query);
 
 
@@ -146,11 +145,52 @@ public class DBconnection {
 
 
     }
+    public  int bookFacility(String df,int gid)
+    {
+        CallableStatement statement=null;
+
+        int bid=0;
+
+        try {
+
+            String sql = "{ ? = call INSERT_BOOKING_FACILITY(?,?) }";
+            statement = conn.prepareCall(sql);
+            statement.setString(2,df);
+            statement.setInt(3,gid);
+            statement.registerOutParameter(1, java.sql.Types.INTEGER);
+            statement.executeUpdate();
+            bid=statement.getInt(1);
+            return  bid;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  SQL_ERROR;
+
+    }
+    public  boolean updateFacility(int facility_id,long facility_booking_id)
+    {
+
+        PreparedStatement statement=null;
+        String query="UPDATE FACILITY SET  FACILITY_BOOKING_ID = "+facility_booking_id+",PAY_STATE='PENDING' WHERE FACILITY_ID= "+facility_id;
+
+        try {
+            statement=conn.prepareStatement(query);
+            int state=statement.executeUpdate();
+            if(state==1)
+            {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
     public int bookRoom(String df,String  dt,int gid)
     {
         CallableStatement statement=null;
-        df=dateConverter(df);
-        dt=dateConverter(dt);
+
         int bid=0;
 
         try {
@@ -171,10 +211,10 @@ public class DBconnection {
         return  SQL_ERROR;
 
     }
-    public  boolean updateRoom(int bid,int [] room)
+    public  boolean updateRoomBook(int bid,int [] room)
     {
         PreparedStatement statement=null;
-        String query="UPDATE ROOM SET STATUS= 'PROCESSING', ROOM_BOOKING_ID = "+bid+" WHERE ROOM_NO IN ( ";
+        String query="UPDATE ROOM SET STATUS= 'PROCESSING', PAY_STATE='PENDING' WHERE ROOM_NO IN ( ";
         int i=0;
         for( i=0;i<room.length;i++)
         {
@@ -189,10 +229,15 @@ public class DBconnection {
         try {
             statement=conn.prepareStatement(query);
             int state=statement.executeUpdate();
-            if(state==1)
-            {
-                return true;
+
+                for (int j = 0; j < room.length; j++) {
+                    String sql = "INSERT INTO ROOM_BOOKING (ROOM_BOOKING_ID,ROOM_NO,BOOKING_ID) VALUES (ROOM_BOOKING_ID_SEQ.NEXTVAL," + room[j] + "," + bid + ")";
+                    statement = conn.prepareStatement(sql);
+                    statement.executeUpdate();
+
+
             }
+            return  true;
         } catch (SQLException e) {
             e.printStackTrace();
         }

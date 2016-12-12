@@ -37,6 +37,13 @@ public class Booking extends HttpServlet {
             }
         }
         session.setAttribute(sessionDataName,room);
+        String st=request.getParameter("Facility");
+        if(st!=null)
+        {
+
+            RequestDispatcher rd=request.getRequestDispatcher("/bookFacility.jsp");
+            rd.forward(request, response);
+        }
         RequestDispatcher rd=request.getRequestDispatcher("/Guestinfo.jsp");
         rd.forward(request, response);
         /*String  room1=request.getParameter("107");

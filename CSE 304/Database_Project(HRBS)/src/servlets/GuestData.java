@@ -38,19 +38,41 @@ public class GuestData extends HttpServlet {
         String  df= (String) session.getAttribute(RoomSearch.sessionDataName2);
         String dt=(String) session.getAttribute(RoomSearch.sessionDataName3);
         int [] rooms= (int[]) session.getAttribute(Booking.sessionDataName);
-        int BOOKINGID=db.bookRoom(df,dt,guestId);
-        if(BOOKINGID!=DBconnection.SQL_ERROR)
+        if(rooms!=null)
         {
-            if(db.updateRoom(BOOKINGID,rooms))
-            {
+            int BOOKINGID = db.bookRoom(df, dt, guestId);
+            if (BOOKINGID != DBconnection.SQL_ERROR) {
+                if (db.updateRoomBook(BOOKINGID, rooms)) {
 
-                out.println("<h1>"+"all right"+"</h1>");
-            }
-            else
-            {
-                out.println("<h1>"+"something wrong"+"</h1>");
+                    out.println("<h1>" + "all right" + "</h1>");
+                } else {
+                    out.println("<h1>" + "something wrong" + "</h1>");
+                }
             }
         }
+
+        try {
+            int facility_id = (int) session.getAttribute(WithFacility.sessionDataName2);
+
+        String facility_date= (String) session.getAttribute(WithFacility.sessionDataName3);
+        if((facility_date!=null))
+        {
+            int Facility_booking=db.bookFacility(facility_date,guestId);
+             if(db.updateFacility(facility_id,Facility_booking))
+             {
+                 out.println("<h1>" + "all right" + "</h1>");
+             }
+             else
+             {
+                 out.println("<h1>" + "something wrong" + "</h1>");
+             }
+
+        }
+        }catch (NullPointerException exception)
+        {
+
+        }
+
 
 
         db.closeConnection();

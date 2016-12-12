@@ -29,41 +29,57 @@
     <br>
 
 
-    <div style="padding-left: 20px">
-        <div class="row">
-            <div class="col-md-6">
-                <h4> Available Rooms </h4>
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th class="col-md-1">Book</th>
 
-                    <th class="col-md-3">Room No</th>
-
-                    <th class="col-md-5">Feature</th>
-
-                    <th class="col-md-3">Price</th>
-                </tr>
-                </thead>
-
-
-                <tbody>
 
        <%
 
            ArrayList<Room>array= (ArrayList<Room>) session.getAttribute(RoomSearch.sessionDataName1);
-           if(array!=null)
+           if((array!=null)&&(array.size()!=0))
 
            {
+               out.println("<div style=\"padding-left: 20px\">\n" +
+                       "        <div class=\"row\">\n" +
+                       "            <div class=\"col-md-6\">\n" +
+                       "                <h4> Available Rooms </h4>\n" +
+                       "            </div>");
+
+               out.println("<div class=\"row\">\n" +
+                       "            <div class=\"col-md-6\">\n" +
+                       "                <h4> Available Rooms </h4>\n" +
+                       "            </div>\n<table class=\"table table-bordered\">\n" +
+                       "                <thead>\n" +
+                       "                <tr>\n" +
+                       "                    <th class=\"col-md-1\">Book</th>\n" +
+                       "\n" +
+                       "                    <th class=\"col-md-3\">Room No</th>\n" +
+                       "\n" +
+                       "                    <th class=\"col-md-5\">Feature</th>\n" +
+                       "\n" +
+                       "                    <th class=\"col-md-3\">Price</th>\n" +
+                       "                </tr>\n" +
+                       "                </thead>\n" +
+                       "\n" +
+                       "\n" +
+                       "                <tbody>");
+
+
+
+
+
                for (int i = 0; i < array.size(); i++) {
                    out.println(array.get(i).gethtml());
                }
+               out.println(" </tbody>\n" +
+                       "            </table>");
+
+           }
+           else
+           {
+               out.println("<h1> No room available according to your criteria</h1>");
            }
        %>
 
-                </tbody>
-            </table>
+
         </div>
         <br>
 
@@ -99,7 +115,17 @@
 
 
     <div class="col-md-7">
-        <button class="btn add-btn" style="float: right">Submit</button>
+        <%
+            if((array!=null)&&(array.size()!=0))
+            {
+                out.println("<button class=\"btn add-btn\" style=\"float: right\">Submit</button> <input class=\"col-md-3 btn add-btn\"  type=\"submit\" value=\"Facility\" name=\"Facility\">");
+            }
+            else
+            {
+                out.println("<button class=\"btn add-btn\" style=\"float: right\"><a href=\"searchRoom.jsp\">Go BAck</a></button>");
+            }
+
+        %>
     </div>
 </div>
 </form>

@@ -32,6 +32,16 @@ public class RoomSearch extends HttpServlet {
         String price_to=request.getParameter("To");
         String  datefrom=request.getParameter("Date_Start");
         String dateto=request.getParameter("Date_To");
+        if(wifi==null)
+        {
+            wifi="NO";
+        }
+
+        if(ac==null)
+        {
+            ac="NO";
+        }
+
         PrintWriter out=response.getWriter();
         //out.println("<h1>"+speciality+capacity+ac+wifi+price_from+price_to+datefrom+dateto+"</h1>");
         HttpSession session = request.getSession();
@@ -40,7 +50,7 @@ public class RoomSearch extends HttpServlet {
         DBconnection database=new DBconnection();
         if(database.isConnectionStatus())
         {
-            out.println("<h1>"+"it is on"+"</h1>");
+           //out.println("<h1>"+"it is on"+"</h1>");
             ArrayList<Room>room=database.getRoomList(speciality,capacity,ac,wifi,price_from,price_to,datefrom,dateto);
             session.setAttribute(sessionDataName1,room);
             session.setAttribute(sessionDataName2,datefrom);
@@ -63,4 +73,5 @@ public class RoomSearch extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
+
 }

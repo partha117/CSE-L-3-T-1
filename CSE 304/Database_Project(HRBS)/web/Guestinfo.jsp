@@ -1,3 +1,4 @@
+<%@ page import="servlets.Booking" %>
 <!DOCTYPE html>
 
 
@@ -12,6 +13,15 @@
 
 <body style="font-family: Georgia, Serif">
 <form method ="post"  action="guestdata.do">
+
+    <%
+        if(session.getAttribute(Booking.sessionDataName)==null)
+        {
+            RequestDispatcher rd=request.getRequestDispatcher("/searchRoom.jsp");
+            rd.forward(request, response);
+        }
+
+    %>
     <div class="col-md-8 col-md-offset-2" style="margin-top: 5%; margin-bottom: 10%">
         <div class="row">
             <div class="col-md-6">
