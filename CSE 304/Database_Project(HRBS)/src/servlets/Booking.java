@@ -26,17 +26,23 @@ public class Booking extends HttpServlet {
         HttpSession session = request.getSession();
         ArrayList<Room> array= (ArrayList<Room>) session.getAttribute("Room Data");
         int room[]=new int[array.size()];
-        boolean booked[]=new boolean[array.size()];
+        int k=0;
         for(int i=0;i<array.size();i++)
         {
             String room_no=request.getParameter(String.valueOf(array.get(i).getRoom_no()));
             if(room_no!=null)
             {
-                room[i]=array.get(i).getRoom_no();
+                room[k]=array.get(i).getRoom_no();
+                k++;
 
             }
         }
-        session.setAttribute(sessionDataName,room);
+        int nRoom[]=new int[k];
+        for(int j=0;j<k;j++)
+        {
+            nRoom[j]=room[j];
+        }
+        session.setAttribute(sessionDataName,nRoom);
         String st=request.getParameter("Facility");
         if(st!=null)
         {

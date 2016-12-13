@@ -2,6 +2,7 @@ package Database;
 
 import Utility.Facility;
 import Utility.Room;
+import com.sun.org.apache.regexp.internal.RE;
 
 import java.sql.*;
 import java.sql.Date;
@@ -89,7 +90,7 @@ public class DBconnection {
         PreparedStatement statement=null;
         ArrayList<Facility> arrayList=new ArrayList<>();
 
-            String query="SELECT FACILITY_ID,PRICE FROM FACILITY WHERE FACILITY_TYPE = '"+facility+
+            String query="SELECT FACILITY_ID,PRICE,SPECIALITY FROM FACILITY WHERE FACILITY_TYPE = '"+facility+
                     "'AND FACILITY_ID NOT IN (SELECT FACILITY_ID FROM FACILITY_BOOKING WHERE BOOKING_ID IN(SELECT  BOOKING_ID FROM BOOKING WHERE DATE_FROM =TO_DATE('"+date+"','YYYY-MM-DD')))";
 
         try {
@@ -98,7 +99,7 @@ public class DBconnection {
             ResultSet rs=statement.executeQuery();
             for(int i=0;rs.next();i++)
             {
-                arrayList.add(new Facility(rs.getString("FACILITY_ID"),facility,rs.getDouble("PRICE")));
+                arrayList.add(new Facility(rs.getString("FACILITY_ID"),facility,rs.getString("SPECIALITY"),rs.getDouble("PRICE")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -168,11 +169,11 @@ public class DBconnection {
         return  SQL_ERROR;
 
     }
-    public  boolean updateFacility(int facility_id,long facility_booking_id)
+    public  boolean updateFacilityBook(int []facility,long facility_booking_id)
     {
 
         PreparedStatement statement=null;
-        String query="UPDATE FACILITY SET  FACILITY_BOOKING_ID = "+facility_booking_id+",PAY_STATE='PENDING' WHERE FACILITY_ID= "+facility_id;
+        /*String query="UPDATE FACILITY SET  FACILITY_BOOKING_ID = "+facility_booking_id+",PAY_STATE='PENDING' WHERE FACILITY_ID= "+facility_id;
 
         try {
             statement=conn.prepareStatement(query);
@@ -181,6 +182,34 @@ public class DBconnection {
             {
                 return true;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;*/
+        /*String query="UPDATE FACILITY SET  PAY_STATE='PENDING' WHERE FACILITY_ID IN ( ";
+        int i=0;
+        for( i=0;i<facility.length;i++)
+        {
+            query+=facility[i]+",";
+        }
+        if(i!=0)
+        {
+            query = query.substring(0, query.length() - 1);
+        }
+        query+=")";*/
+
+        try {
+           /* statement=conn.prepareStatement(query);
+            int state=statement.executeUpdate();*/
+
+            for (int j = 0; j < facility.length; j++) {
+                String sql = "INSERT INTO FACILITY_BOOKING (FACILITY_BOOKING_ID,FACILITY_ID,BOOKING_ID,PAY_STATE) VALUES (FACILITY_BOOKING_ID_SEQ.NEXTVAL," + facility[j] + "," + facility_booking_id + ",'PENDING')";
+                statement = conn.prepareStatement(sql);
+                statement.executeUpdate();
+
+
+            }
+            return  true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -214,7 +243,7 @@ public class DBconnection {
     public  boolean updateRoomBook(int bid,int [] room)
     {
         PreparedStatement statement=null;
-        String query="UPDATE ROOM SET STATUS= 'PROCESSING', PAY_STATE='PENDING' WHERE ROOM_NO IN ( ";
+        String query="UPDATE ROOM SET STATUS= 'PROCESSING'  WHERE ROOM_NO IN ( ";
         int i=0;
         for( i=0;i<room.length;i++)
         {
@@ -231,7 +260,7 @@ public class DBconnection {
             int state=statement.executeUpdate();
 
                 for (int j = 0; j < room.length; j++) {
-                    String sql = "INSERT INTO ROOM_BOOKING (ROOM_BOOKING_ID,ROOM_NO,BOOKING_ID) VALUES (ROOM_BOOKING_ID_SEQ.NEXTVAL," + room[j] + "," + bid + ")";
+                    String sql = "INSERT INTO ROOM_BOOKING (ROOM_BOOKING_ID,ROOM_NO,BOOKING_ID,PAY_STATE) VALUES (ROOM_BOOKING_ID_SEQ.NEXTVAL," + room[j] + "," + bid + ",'PENDING')";
                     statement = conn.prepareStatement(sql);
                     statement.executeUpdate();
 
@@ -276,6 +305,26 @@ public class DBconnection {
         }
         return SQL_ERROR;
 
+    }
+    public String getDesignation(String  username,String  password)
+    {
+        PreparedStatement statement=null;
+        String designation= String.valueOf(SQL_ERROR);
+
+
+        String sql="SELECT DESIGNATION FROM EMPLOYEE WHERE EMPLOYEE_ID="+username+" AND PASSWORD = "+password;
+        try {
+            statement=conn.prepareStatement(sql);
+            ResultSet rs=statement.executeQuery();
+
+            if(rs.next())
+            {
+                designation=rs.getString("DESIGNATION");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  designation;
     }
 }
 

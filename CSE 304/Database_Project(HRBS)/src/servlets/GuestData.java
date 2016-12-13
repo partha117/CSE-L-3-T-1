@@ -52,13 +52,13 @@ public class GuestData extends HttpServlet {
         }
 
         try {
-            int facility_id = (int) session.getAttribute(WithFacility.sessionDataName2);
+            int[] facility_id = (int[]) session.getAttribute(BookingWithFacility.sessionDataName1);
 
         String facility_date= (String) session.getAttribute(WithFacility.sessionDataName3);
         if((facility_date!=null))
         {
             int Facility_booking=db.bookFacility(facility_date,guestId);
-             if(db.updateFacility(facility_id,Facility_booking))
+             if(db.updateFacilityBook(facility_id,Facility_booking))
              {
                  out.println("<h1>" + "all right" + "</h1>");
              }

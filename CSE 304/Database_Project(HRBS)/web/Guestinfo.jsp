@@ -1,4 +1,5 @@
 <%@ page import="servlets.Booking" %>
+<%@ page import="servlets.BookingWithFacility" %>
 <!DOCTYPE html>
 
 
@@ -15,7 +16,7 @@
 <form method ="post"  action="guestdata.do">
 
     <%
-        if(session.getAttribute(Booking.sessionDataName)==null)
+        if((session.getAttribute(Booking.sessionDataName)==null)&&(session.getAttribute(BookingWithFacility.sessionDataName1)==null))
         {
             RequestDispatcher rd=request.getRequestDispatcher("/searchRoom.jsp");
             rd.forward(request, response);
@@ -115,30 +116,42 @@
                 </div>
             </div>
             <br>
+            <%
+                if(session.getAttribute(BookingWithFacility.sessionDataName1)!=null)
+                {
+                    out.println("<div class=\"row\">\n" +
+                            "                <div class=\"col-md-2\">\n" +
+                            "                    Club member no\n" +
+                            "                </div>\n" +
+                            "\n" +
+                            "\n" +
+                            "                <div class=\"col-md-4\">\n" +
+                            "                    <input class=\"col-md-11 simpleinput\" name=\"Club_member\" type=\"text\" placeholder=\"If you are a club member\">\n" +
+                            "                </div>\n" +
+                            "            </div>");
+                }
+            %>
 
-            <div class="row">
-                <div class="col-md-2">
-                    Club member no
-                </div>
-
-
-                <div class="col-md-4">
-                    <input class="col-md-11 simpleinput" name="Club_member" type="text" placeholder="If you are a club member">
-                </div>
-            </div>
             <br>
         </div>
+        <%
+            if(session.getAttribute(Booking.sessionDataName)!=null)
+            {
+                out.println("\n" +
+                        "        <div class=\"row\">\n" +
+                        "            <div class=\"col-md-2\">\n" +
+                        "                Total person:\n" +
+                        "            </div>\n" +
+                        "\n" +
+                        "\n" +
+                        "            <div class=\"col-md-4\">\n" +
+                        "                <input class=\"col-md-11 \" name=\"Person\" type=\"number\" min=\"1\" max=\"5\">\n" +
+                        "                \n" +
+                        "            </div>\n" +
+                        "        </div>");
+            }
 
-        <div class="row">
-            <div class="col-md-2">
-                Total person:
-            </div>
-
-
-            <div class="col-md-4">
-                <input class="col-md-11 " name="Person" type="number" min="1" max="5">
-            </div>
-        </div>
+        %>
         <br>
     </div>
 
