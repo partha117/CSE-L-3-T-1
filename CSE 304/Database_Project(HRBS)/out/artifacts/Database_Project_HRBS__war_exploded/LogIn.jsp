@@ -1,4 +1,4 @@
-<%--
+<%@ page import="servlets.LogIn" %><%--
   Created by IntelliJ IDEA.
   User: ASUS
   Date: 13-Dec-16
@@ -17,6 +17,10 @@
 
 <body style="font-family: Georgia, Serif">
 <form method="post" action="LogIn.do">
+
+
+
+
     <div class="col-md-5 text-center" style="padding-top: 15%">
         <h2> Hotel Management System </h2>
         <p> Award winning hotel management system</p>
@@ -32,6 +36,29 @@
             <div class="col-md-2 col-md-offset-2">
                 Username
             </div>
+
+            <%
+                String  name= (String) session.getAttribute(LogIn.sessionDataName1);
+                if(name!=null)
+                {
+                    String designation= (String) session.getAttribute(LogIn.sessionDataName2);
+                    if(designation.compareTo("ACCOUNTANT")==0)
+                    {
+                        RequestDispatcher rd=request.getRequestDispatcher("/index.jsp");
+                        rd.forward(request,response);
+                    }
+                    else if(designation.compareTo("RECEPTIONIST")==0)
+                    {
+                        RequestDispatcher rd=request.getRequestDispatcher("/checkin.html");
+                        rd.forward(request,response);
+                    }
+                    else if(designation.compareTo("MAINTENANCE MANAGER")==0)
+                    {
+
+                    }
+                }
+
+            %>
 
 
             <div class="col-md-6">

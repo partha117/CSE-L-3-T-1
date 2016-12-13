@@ -1,4 +1,6 @@
-<%--
+<%@ page import="servlets.LogIn" %>
+<%@ page import="servlets.CalculateBill" %>
+<%@ page import="Utility.Bill" %><%--
   Created by IntelliJ IDEA.
   User: ASUS
   Date: 08-Dec-16
@@ -18,6 +20,29 @@
 
 <body style="font-family: Georgia, Serif">
 <div class="col-md-8 col-md-offset-2" style="margin-top: 5%; margin-bottom: 10%">
+    <form method="post" action="CalculateBill.do">
+    <%
+        String designation= (String) session.getAttribute(LogIn.sessionDataName2);
+        if(designation.compareTo("ACCOUNTANT")==0)
+        {
+            String  name= (String) session.getAttribute(LogIn.sessionDataName1);
+            if(name!=null)
+            {
+                    String html = "<div class=\"col-md-offset-0\">\n" +
+                    "\t\t\tLogged in as   " + name + "\n" +
+                    "\t\t\t</div>\n" +
+                    "\t\t\t<br>\n" +
+                    "\t\t\t<br>";
+                out.println(html);
+            }
+        }
+        else
+        {
+            RequestDispatcher rd=request.getRequestDispatcher("/LogIn.jsp");
+            rd.forward(request,response);
+        }
+
+    %>
   <div class="row">
     <div class="col-md-6">
       <h3>Bill Entry</h3>
@@ -27,6 +52,7 @@
     <div class="col-md-1 col-md-offset-1">
       Date
     </div>
+
 
 
     <div class="col-md-4">
@@ -39,12 +65,12 @@
   <div style="padding-left: 20px">
     <div class="row">
       <div class="col-md-2">
-        Memo No
+        Payment Method
       </div>
 
 
       <div class="col-md-4">
-        <input class="col-md-11 simpleinput" name="Memo_Id" type="text">
+        <input class="col-md-11 simpleinput" name="Payment Method" type="text">
       </div>
     </div>
     <br>
@@ -59,137 +85,75 @@
       <div class="col-md-4">
         <input class="col-md-11 simpleinput" name="Guest_Id" type="text">
       </div>
+        <input class="btn btn-sm btn add-btn"  type="submit" value="Calculate" name="Calculate">
     </div>
     <br>
   </div>
 
+        <%
+            Bill bill=(Bill)session.getAttribute(CalculateBill.sessionDataName);
+            if(bill!=null)
+            {
+                bill.generateBill();
+                String  html=" <h4>Purchases</h4>\n" +
+                "        </div>"+"<table class=\"table table-no-border\">\n" +
+                "            <thead>\n" +
+                "            <tr>\n" +
+                "              <th class=\"col-md-5\">Service</th>\n" +
+                "\n" +
+                "              <th class=\"col-md-2\">Rate</th>\n" +
+                "\n" +
+                "              <th class=\"col-md-1\">Quantity</th>\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "              <th class=\"col-md-2 text-center\">Amount</th>\n" +
+                "            </tr>\n" +
+                "            </thead>";
 
-  <div class="inputroot">
-    <div style="margin: 30px 0px">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <button class="btn btn-sm add-row-btn" style="float: right">Add more</button>
+                    out.flush();
+                    //out.println(bill.getHtml());
+                    String  others=" <div class=\"inputroot\">\n" +
+                    "    <div style=\"margin: 30px 0px\">\n" +
+                    "      <div class=\"panel panel-default\">\n" +
+                    "        <div class=\"panel-heading\">\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "        <div class=\"panel-body\">\n" +
+                    "\n" +
+                    "  <br>\n" +
+                    "  <div class=\"row\" style=\"margin: 20px 0px\">\n" +
+                    "    <div class=\"col-md-12\" style=\"border: 1px solid gainsboro\">\n" +
+                    "    </div>\n" +
+                    "  </div>\n" +
+                    "  <br>\n" +
+                    "  <div class=\"col-md-4\">\n" +
+                    "    <input type=\"radio\" name=\"refundable\" value=\"YES\"> Refundable\n" +
+                    "  </div>\n" +
+                    "  <div class=\"col-md-5\">\n" +
+                    "    <input class=\"simpleinput col-md-12\" name=\"by\" type=\"text\" placeholder=\"Validated by"+(String) session.getAttribute(LogIn.sessionDataName1)+"("+designation+")\">\n" +
+                    "  </div>\n" +
+                    "  <div class=\"col-md-3\">\n" +
+                    "    <input class=\"btn btn-sm btn add-btn\"  type=\"submit\" value=\"Submit\" name=\"Submit\">" +
+                    "  </div>\n" +
+                    "</div>";
 
-          <h4>Purchases</h4>
-        </div>
+                    out.println(html);
+                    out.append(bill.getHtml());
+                    out.append(others);
+                    out.flush();
 
+                    out.close();
 
-        <div class="panel-body">
-          <table class="table table-no-border">
-            <thead>
-            <tr>
-              <th class="col-md-5">Service</th>
+            }
 
-              <th class="col-md-2">Rate</th>
-
-              <th class="col-md-1">Quantity</th>
-
-              <th class="col-md-1">Unit</th>
-
-              <th class="col-md-2 text-center">Amount</th>
-            </tr>
-            </thead>
-
-
-            <tbody>
-            <tr>
-
-              <td><input class="form-control simpleinput" name="Service" type="text">
-              </td>
-
-              <td><input class="rate form-control simpleinput" name="Rate" type="text">
-              </td>
-
-              <td><input class="form-control simpleinput" name="Quantity" type="text">
-              </td>
-
-              <td><input class="form-control simpleinput" name="Unit" type="text">
-              </td>
-
-              <td><input class="form-control simpleinput" name="Amount" readonly type="text">
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-
-
-    <div class="row">
-      <div class="col-md-2 col-md-offset-6">
-        Grand Total
-      </div>
-
-
-      <div class="col-md-4">
-        <input class="col-md-11 simpleinput" name="Grand_Total" type="text">
-      </div>
-    </div>
-    <br>
+        %>
 
 
-    <div class="row">
-      <div class="col-md-2 col-md-offset-6">
-        Payment
-      </div>
 
-
-      <div class="col-md-4">
-        <input class="col-md-11 simpleinput" name="Payment" type="text">
-      </div>
-    </div>
-    <br>
-
-
-    <div class="row">
-      <div class="col-md-2 col-md-offset-6">
-        Discount
-      </div>
-
-
-      <div class="col-md-4">
-        <input class="col-md-11 simpleinput" name="Discount" type="text">
-      </div>
-    </div>
-    <br>
-
-
-    <div class="row" style="margin: 20px 0px">
-      <div class="col-md-6 col-md-offset-6" style="border: 1px solid gainsboro">
-      </div>
-    </div>
-
-
-    <div class="row">
-      <div class="col-md-2 col-md-offset-6">
-        Due
-      </div>
-
-
-      <div class="col-md-4">
-        <input class="col-md-11 simpleinput" name="Due" type="text">
-      </div>
-    </div>
-  </div>
-
-  <br>
-  <div class="row" style="margin: 20px 0px">
-    <div class="col-md-12" style="border: 1px solid gainsboro">
-    </div>
-  </div>
-  <br>
-  <div class="col-md-4">
-    <input type="radio" name="type" value="rufundable"> Refundable
-  </div>
-  <div class="col-md-5">
-    <input class="simpleinput col-md-12" name="by" type="text" placeholder="Validated by">
-  </div>
-  <div class="col-md-3">
-    <button class="btn add-btn" style="float: right">Submit</button>
-  </div>
-</div>
 
 </body>
 </html>

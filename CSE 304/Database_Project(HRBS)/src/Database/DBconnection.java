@@ -3,6 +3,7 @@ package Database;
 import Utility.Facility;
 import Utility.Room;
 import com.sun.org.apache.regexp.internal.RE;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.sql.*;
 import java.sql.Date;
@@ -119,7 +120,7 @@ public class DBconnection {
         try {
 
             System.out.println("<h1>"+sp+cap+ac+wifi+pf+pt+df+dt+"</h1>");
-            String  query="SELECT ROOM_NO,SPECALITY,ROOM_COST FROM ROOM WHERE CAPACITY ='"+cap+"' AND SPECALITY ='"+sp+"'AND AIR_CONDITIONER ='"+ac+"' AND WI_FI = '"+wifi+"'  AND (" +
+            String  query="SELECT ROOM_NO,SPECIALITY,ROOM_COST FROM ROOM WHERE CAPACITY ='"+cap+"' AND SPECIALITY ='"+sp+"'AND AIR_CONDITIONER ='"+ac+"' AND WI_FI = '"+wifi+"'  AND (" +
                     "ROOM_COST BETWEEN "+pf +
                     " AND "+pt +
                     ")" +
@@ -134,9 +135,9 @@ public class DBconnection {
 
             for(int i=0;rs.next();i++)
             {
-                room.add(new Room(rs.getString("SPECALITY"),rs.getDouble("ROOM_COST"),rs.getInt("ROOM_NO")));
+                room.add(new Room(rs.getString("SPECIALITY"),rs.getDouble("ROOM_COST"),rs.getInt("ROOM_NO")));
             }
-            room.add(new Room(rs.getString("SPECALITY"),rs.getDouble("ROOM_COST"),rs.getInt("ROOM_NO")));
+            room.add(new Room(rs.getString("SPECIALITY"),rs.getDouble("ROOM_COST"),rs.getInt("ROOM_NO")));
 
 
         } catch (SQLException e) {
@@ -306,6 +307,40 @@ public class DBconnection {
         return SQL_ERROR;
 
     }
+    public int insertGuest(String first_name,String last_name,String address,String  contact,String nid,String passport,String person,String memberno)
+    {
+
+        CallableStatement statement= null;
+        int gid=0;
+
+        System.out.println("i am here");
+        try {
+
+            String sql = "{ ? = call INSERT_GUEST_MEMBER(?,?,?,?,?,?,?) }";
+            statement = conn.prepareCall(sql);
+            statement.setString(2,first_name);
+            statement.setString(3,last_name);
+            statement.setString(4,address);
+            statement.setString(5,contact);
+            statement.setString(6,passport);
+            statement.setString(7,nid);
+            statement.setInt(8, Integer.parseInt(memberno));
+            statement.registerOutParameter(1, java.sql.Types.INTEGER);
+            statement.executeUpdate();
+            gid=statement.getInt(1);
+
+
+
+            //System.out.println("It is state "+state);
+
+            return gid;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return SQL_ERROR;
+
+    }
     public String getDesignation(String  username,String  password)
     {
         PreparedStatement statement=null;
@@ -325,6 +360,151 @@ public class DBconnection {
             e.printStackTrace();
         }
         return  designation;
+    }
+    public String getName(String  username,String  password)
+    {
+        PreparedStatement statement=null;
+        String name= String.valueOf(SQL_ERROR);
+
+
+        String sql="SELECT EMPLOYEE_FIRST_NAME,EMPLOYEE_LAST_NAME FROM EMPLOYEE WHERE EMPLOYEE_ID="+username+" AND PASSWORD = "+password;
+        try {
+            statement=conn.prepareStatement(sql);
+            ResultSet rs=statement.executeQuery();
+            if(rs.next())
+            {
+                name=rs.getString("EMPLOYEE_FIRST_NAME")+"    "+rs.getString("EMPLOYEE_LAST_NAME");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  name;
+    }
+    public  ArrayList<Facility>  getAllFacility(int guestId)
+    {
+        PreparedStatement statement=null;
+        ArrayList<Facility> arrayList=new ArrayList<>();
+
+        String sql="SELECT  FACILITY_ID,PRICE,FACILITY_TYPE,SPECIALITY FROM FACILITY WHERE FACILITY_ID IN " +
+                "(SELECT FACILITY_ID FROM FACILITY_BOOKING WHERE PAY_STATE='PENDING' AND BOOKING_ID IN(SELECT BOOKING_ID" +
+                " FROM BOOKING WHERE DATE_TO IS NULL AND BOOKED_BY_GUEST="+guestId+"))";
+
+        try {
+            statement=conn.prepareStatement(sql);
+            ResultSet rs=statement.executeQuery();
+            for(;rs.next();)
+            {
+                Facility facility=new Facility(rs.getString("FACILITY_ID"),rs.getString("FACILITY_TYPE"),rs.getString("SPECIALITY"),rs.getDouble("PRICE"));
+                arrayList.add(facility);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  arrayList;
+    }
+    public  ArrayList<Room>  getAllRoom(int guestId)
+    {
+        PreparedStatement statement=null;
+        ArrayList<Room> arrayList=new ArrayList<>();
+
+        String sql="SELECT  ROOM_NO,ROOM_COST,SPECIALITY FROM ROOM WHERE ROOM_NO IN " +
+                "(SELECT ROOM_NO FROM ROOM_BOOKING WHERE PAY_STATE='PENDING' AND BOOKING_ID IN(SELECT BOOKING_ID" +
+                " FROM BOOKING WHERE DATE_TO IS NOT NULL AND DATE_FROM IS NOT NULL AND BOOKED_BY_GUEST="+guestId+"))";
+
+        try {
+            statement=conn.prepareStatement(sql);
+            ResultSet rs=statement.executeQuery();
+            for(;rs.next();)
+            {
+                Room room=new Room(rs.getString("SPECIALITY"),rs.getDouble("ROOM_COST"),rs.getInt("ROOM_NO"));
+                arrayList.add(room);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  arrayList;
+    }
+    public  String memberType(int guestId)
+    {
+        String type=null;
+        PreparedStatement statement=null;
+         String sql="SELECT MEMBER_TYPE FROM CLUB_MEMBER_DATA WHERE MEMBER_ID =" +
+                 "(SELECT MEMBER_ID FROM CLUB_MEMBER WHERE MEMBER_GUEST_ID="+guestId+")";
+
+        try {
+            statement=conn.prepareStatement(sql);
+            ResultSet rs=statement.executeQuery();
+            rs.next();
+            type=rs.getString("MEMBER_TYPE");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  type;
+
+    }
+    public  boolean insertBill(String  refundable,String guest_id,String employee_id,String amount,String payment_method)
+    {
+        PreparedStatement statement=null;
+        String sql="INSERT INTO BILL(BILL_ID,REFUNDABLE,BILL_DATE,AMOUNT,EMPLOYEE_ID," +
+                "GUEST_ID,PAYMENT_METHOD)VALUES (BILL_ID_SEQ.NEXTVAL,'"+refundable+"',SYSDATE,"
+                +amount+","+employee_id+","+guest_id+","+"'"+payment_method+"')";
+        try {
+            statement=conn.prepareStatement(sql);
+            int state=statement.executeUpdate();
+            if(state!=0)
+            {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+    public boolean updatePayState(String guest_id)
+    {
+        ArrayList<Facility>facilities=getAllFacility(Integer.parseInt(guest_id));
+        ArrayList<Room> rooms=getAllRoom(Integer.parseInt(guest_id));
+        String sql="UPDATE ROOM_BOOKING SET PAY_STATE='PAID' WHERE ROOM_NO IN(";
+        PreparedStatement statement=null;
+        int k=0;
+        for(int i=0;i<rooms.size();i++)
+        {
+            sql+=rooms.get(i).getRoom_no()+",";
+            k=1;
+        }
+        if(k!=0)
+        {
+            sql = sql.substring(0, sql.length() - 1);
+        }
+        sql+=")";
+        try {
+            statement=conn.prepareStatement(sql);
+            statement.executeUpdate();
+            sql="UPDATE FACILITY_BOOKING SET PAY_STATE='PAID' WHERE FACILITY_ID IN(";
+            k=0;
+            for(int i=0;i<facilities.size();i++)
+            {
+                sql+=facilities.get(i).getFacility_id()+",";
+                k=1;
+            }
+            if(k!=0)
+            {
+                sql = sql.substring(0, sql.length() - 1);
+            }
+            sql+=")";
+            statement.executeUpdate();
+
+            return  true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  false;
+
     }
 }
 

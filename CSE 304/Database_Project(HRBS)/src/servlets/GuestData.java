@@ -32,7 +32,16 @@ public class GuestData extends HttpServlet {
 
 
         DBconnection db=new DBconnection();
-        int guestId=db.insertGuest(guestFirstName,guestLastName,guestAddress,guestContact,guestNID,guestPassport,guestPerson);
+        int guestId;
+        if(guestMemberNo==null)
+        {
+            guestId=db.insertGuest(guestFirstName,guestLastName,guestAddress,guestContact,guestNID,guestPassport,guestPerson);
+        }
+        else
+        {
+            guestId=db.insertGuest(guestFirstName,guestLastName,guestAddress,guestContact,guestNID,guestPassport,guestPerson,guestMemberNo);
+        }
+
         HttpSession session=request.getSession();
         session.setAttribute("GUEST_ID",guestId);
         String  df= (String) session.getAttribute(RoomSearch.sessionDataName2);
