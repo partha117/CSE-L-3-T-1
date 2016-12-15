@@ -43,6 +43,18 @@
         }
 
     %>
+      <div class="row">
+        <div class="col-md-offset-9">
+          <select name="ACTIVITY">
+            <option name="option1" value="LOG_OUT">Log out</option>
+            <option name="option2" value="CHANGE_PASSWORD">Change Password</option>
+          </select>
+        </div>
+        <div>
+          <input class="btn btn-sm btn add-btn col-md-offset-11"  type="submit" value="Go" name="Go">
+        </div>
+
+      </div>
   <div class="row">
     <div class="col-md-6">
       <h3>Bill Entry</h3>

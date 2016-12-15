@@ -43,7 +43,7 @@ public class LogIn extends HttpServlet {
             {
                 session.setAttribute(sessionDataName1,name);
                 session.setAttribute(sessionDataName2,designation);
-                RequestDispatcher rd=request.getRequestDispatcher("/checkin.html");
+                RequestDispatcher rd=request.getRequestDispatcher("/checkin.jsp");
                 rd.forward(request,response);
             }
             else if(designation.compareTo("MAINTENANCE MANAGER")==0)

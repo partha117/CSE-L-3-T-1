@@ -1,4 +1,5 @@
-<%@ page import="servlets.LogIn" %><%--
+<%@ page import="servlets.LogIn" %>
+<%@ page import="servlets.ChangePassword" %><%--
   Created by IntelliJ IDEA.
   User: ASUS
   Date: 13-Dec-16
@@ -31,14 +32,11 @@
                 <h3>User Login</h3>
             </div>
         </div>
-        <div class="row">
 
-            <div class="col-md-2 col-md-offset-2">
-                Username
-            </div>
 
             <%
                 String  name= (String) session.getAttribute(LogIn.sessionDataName1);
+                String message=(String )session.getAttribute(ChangePassword.SessionDataname);
                 if(name!=null)
                 {
                     String designation= (String) session.getAttribute(LogIn.sessionDataName2);
@@ -49,7 +47,7 @@
                     }
                     else if(designation.compareTo("RECEPTIONIST")==0)
                     {
-                        RequestDispatcher rd=request.getRequestDispatcher("/checkin.html");
+                        RequestDispatcher rd=request.getRequestDispatcher("/checkin.jsp");
                         rd.forward(request,response);
                     }
                     else if(designation.compareTo("MAINTENANCE MANAGER")==0)
@@ -57,8 +55,17 @@
 
                     }
                 }
+                if(message!=null)
+                {
+                    out.println("<h3>"+message+"</h3>");
+                }
 
             %>
+        <div class="row">
+
+            <div class="col-md-2 col-md-offset-2">
+                Username
+            </div>
 
 
             <div class="col-md-6">

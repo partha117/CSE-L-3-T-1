@@ -468,7 +468,8 @@ public class DBconnection {
     {
         ArrayList<Facility>facilities=getAllFacility(Integer.parseInt(guest_id));
         ArrayList<Room> rooms=getAllRoom(Integer.parseInt(guest_id));
-        String sql="UPDATE ROOM_BOOKING SET PAY_STATE='PAID' WHERE ROOM_NO IN(";
+        String sql="UPDATE ROOM_BOOKING SET PAY_STATE='PAID' WHERE BOOKING_ID=(SELECT  BOOKING_ID" +
+                " FROM BOOKING WHERE DATE_FROM IS NOT NULL AND DATE_TO IS NOT NULL AND BOOKED_BY_GUEST = "+guest_id+") AND ROOM_NO IN(";
         PreparedStatement statement=null;
         int k=0;
         for(int i=0;i<rooms.size();i++)
@@ -484,7 +485,8 @@ public class DBconnection {
         try {
             statement=conn.prepareStatement(sql);
             statement.executeUpdate();
-            sql="UPDATE FACILITY_BOOKING SET PAY_STATE='PAID' WHERE FACILITY_ID IN(";
+            sql="UPDATE FACILITY_BOOKING SET PAY_STATE='PAID' WHERE  BOOKING_ID=(SELECT  BOOKING_ID" +
+                    " FROM BOOKING WHERE DATE_FROM IS NOT NULL AND DATE_TO IS NULL AND BOOKED_BY_GUEST = "+guest_id+") AND FACILITY_ID IN(";
             k=0;
             for(int i=0;i<facilities.size();i++)
             {
@@ -496,6 +498,7 @@ public class DBconnection {
                 sql = sql.substring(0, sql.length() - 1);
             }
             sql+=")";
+            statement=conn.prepareStatement(sql);
             statement.executeUpdate();
 
             return  true;
@@ -506,5 +509,66 @@ public class DBconnection {
         return  false;
 
     }
+    public int changeRoomStatus(String  guestId)
+    {
+        ArrayList<Integer> rooms=new ArrayList<>();
+        PreparedStatement statement1=null;
+        String sql1="SELECT  ROOM_NO FROM ROOM WHERE ROOM_NO IN " +
+                "(SELECT ROOM_NO FROM ROOM_BOOKING WHERE BOOKING_ID IN(SELECT BOOKING_ID" +
+                " FROM BOOKING WHERE DATE_TO IS NOT NULL AND DATE_FROM IS NOT NULL AND BOOKED_BY_GUEST="+guestId+"))";
+
+        try {
+            statement1 = conn.prepareStatement(sql1);
+            ResultSet rs = statement1.executeQuery();
+            for (; rs.next(); ) {
+
+                rooms.add(rs.getInt("ROOM_NO"));
+            }
+        }catch (SQLException e)
+        {
+            return  0;
+        }
+        int update=0;
+        if(rooms.size()!=0)
+        {
+            PreparedStatement statement=null;
+
+            String sql="UPDATE ROOM SET STATUS='OCCUPIED' WHERE ROOM_NO IN (";
+            int i=0;
+            for (i=0;i<rooms.size();i++)
+            {
+                sql+=rooms.get(i)+",";
+            }
+            if(i!=0)
+            {
+                sql=sql.substring(0,sql.length()-1);
+            }
+            sql+=")";
+            try {
+                statement=conn.prepareStatement(sql);
+                update=statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        return  update;
+    }
+    public  int changePassword(String  eid,String op,String np)
+    {
+        PreparedStatement statement=null;
+        int update=0;
+        String  sql="UPDATE EMPLOYEE SET PASSWORD = "+np+" WHERE PASSWORD = "+op+" AND EMPLOYEE_ID = "+eid;
+        try {
+            statement=conn.prepareStatement(sql);
+            update=statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return update;
+
+    }
+
 }
 

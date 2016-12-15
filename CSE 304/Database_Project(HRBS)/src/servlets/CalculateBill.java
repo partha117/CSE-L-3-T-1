@@ -27,40 +27,66 @@ public class CalculateBill extends HttpServlet {
 
 
         HttpSession session=request.getSession();
-        String status= request.getParameter("Submit");
-        if(status==null)
-        {
+        String task=request.getParameter("Go");
+        if(task==null) {
+            String status = request.getParameter("Submit");
+            if (status == null) {
 
 
-            String calculate = request.getParameter("Calculate");
-            if (calculate != null) {
-                String guestId = request.getParameter("Guest_Id");
+                String calculate = request.getParameter("Calculate");
+                if (calculate != null) {
+                    String guestId = request.getParameter("Guest_Id");
+                    DBconnection database = new DBconnection();
+                    ArrayList<Facility> facilities = database.getAllFacility(Integer.parseInt(guestId));
+                    ArrayList<Room> rooms = database.getAllRoom(Integer.parseInt(guestId));
+                    String member = database.memberType(Integer.parseInt(guestId));
+                    Bill bill = new Bill(facilities, rooms, Integer.parseInt(guestId), member);
+
+                    session.setAttribute(sessionDataName, bill);
+                    session.setAttribute(sessionDataName2, guestId);
+                    database.closeConnection();
+                    RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+                    rd.forward(request, response);
+                }
+            } else {
+                String refundable = request.getParameter("refundable");
+                if (refundable == null) {
+                    refundable = "NO";
+                }
+                String guest_id = (String) session.getAttribute(sessionDataName2);
+                String payment = request.getParameter("Payment Method");
+                String amount = request.getParameter("Payment");
+                String employee_id = (String) session.getAttribute(LogIn.sessionDataName3);
                 DBconnection database = new DBconnection();
-                ArrayList<Facility> facilities = database.getAllFacility(Integer.parseInt(guestId));
-                ArrayList<Room> rooms = database.getAllRoom(Integer.parseInt(guestId));
-                String member = database.memberType(Integer.parseInt(guestId));
-                Bill bill = new Bill(facilities, rooms, Integer.parseInt(guestId), member);
-
-                session.setAttribute(sessionDataName, bill);
-                session.setAttribute(sessionDataName2,guestId);
+                database.updatePayState(guest_id);
+                database.insertBill(refundable, guest_id, employee_id, amount, payment);
                 database.closeConnection();
-                RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-                rd.forward(request, response);
+
+
             }
         }
         else
         {
-            String refundable= request.getParameter("refundable");
-            String guest_id=(String)session.getAttribute(sessionDataName2);
-            String payment=request.getParameter("Payment Method");
-            String amount=request.getParameter("Payment");
-            String employee_id=(String)session.getAttribute(LogIn.sessionDataName3);
-            DBconnection database=new DBconnection();
-            database.updatePayState(guest_id);
-            database.insertBill(refundable,guest_id,employee_id,amount,payment);
-            database.closeConnection();
+            String activity=request.getParameter("ACTIVITY");
+            if(activity!=null)
+            {
+                if(activity.compareTo("LOG_OUT")==0)
+                {
+                    session=request.getSession();
+                    session.removeAttribute(LogIn.sessionDataName1);
+                    session.removeAttribute(LogIn.sessionDataName2);
+                    session.removeAttribute(LogIn.sessionDataName3);
+                    session.removeAttribute(ChangePassword.SessionDataname);
 
-
+                    RequestDispatcher rd=request.getRequestDispatcher("/LogIn.jsp");
+                    rd.forward(request,response);
+                }
+                else if(activity.compareTo("CHANGE_PASSWORD")==0)
+                {
+                    RequestDispatcher rd=request.getRequestDispatcher("/ChangePassword.jsp");
+                    rd.forward(request,response);
+                }
+            }
         }
 
     }
