@@ -3,6 +3,7 @@ package servlets;
 import Database.DBconnection;
 import Utility.Bill;
 import Utility.Facility;
+import Utility.Rate;
 import Utility.Room;
 
 import javax.servlet.RequestDispatcher;
@@ -40,7 +41,12 @@ public class CalculateBill extends HttpServlet {
                     ArrayList<Facility> facilities = database.getAllFacility(Integer.parseInt(guestId));
                     ArrayList<Room> rooms = database.getAllRoom(Integer.parseInt(guestId));
                     String member = database.memberType(Integer.parseInt(guestId));
-                    Bill bill = new Bill(facilities, rooms, Integer.parseInt(guestId), member);
+                    ArrayList<Rate> data;
+                    if(member!=null)
+                    {
+                        data=database.getdiscountPolicy(member);
+                    }
+                    Bill bill = new Bill(facilities, rooms, Integer.parseInt(guestId), member,data);
 
                     session.setAttribute(sessionDataName, bill);
                     session.setAttribute(sessionDataName2, guestId);
@@ -73,11 +79,7 @@ public class CalculateBill extends HttpServlet {
                 if(activity.compareTo("LOG_OUT")==0)
                 {
                     session=request.getSession();
-                    session.removeAttribute(LogIn.sessionDataName1);
-                    session.removeAttribute(LogIn.sessionDataName2);
-                    session.removeAttribute(LogIn.sessionDataName3);
-                    session.removeAttribute(ChangePassword.SessionDataname);
-
+                    session.invalidate();
                     RequestDispatcher rd=request.getRequestDispatcher("/LogIn.jsp");
                     rd.forward(request,response);
                 }

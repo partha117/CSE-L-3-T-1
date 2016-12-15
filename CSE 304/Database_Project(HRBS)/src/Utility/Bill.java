@@ -9,16 +9,18 @@ public class Bill {
 
     private ArrayList<Facility> facilities;
     private  ArrayList<Room> rooms;
+    private ArrayList<Rate>discount;
     private  int guestID;
     private  double total=0;
     private  double totalF=0;
     private  String billHtml;
     private  String memberType;
-    public Bill(ArrayList<Facility> facilities, ArrayList<Room> rooms, int guestID,String memberType) {
+    public Bill(ArrayList<Facility> facilities, ArrayList<Room> rooms, int guestID,String memberType,ArrayList<Rate>discount) {
         this.facilities = facilities;
         this.rooms = rooms;
         this.guestID = guestID;
         this.memberType=memberType;
+        this.discount=discount;
     }
     public  void generateBill()
     {
@@ -41,21 +43,15 @@ public class Bill {
                     "              <td><input class=\"form-control simpleinput\" name=\"Amount\" readonly type=\"text\" value=\""+facilities.get(i).getPrice()+"\">\n" +
                     "              </td>\n" +
                     "            </tr>";
-            totalF+=facilities.get(i).getPrice();
-        }
-        double discount=0;
-        if(memberType!=null) {
-            if (memberType.compareTo("GOLD") == 0) {
-                discount = totalF * 0.25;
-            } else if (memberType.compareTo("SILVER") == 0) {
-                discount = totalF * 0.15;
-            }
-            else  if(memberType.compareTo("BRONZE") == 0)
+            total+=facilities.get(i).getPrice();
+            if(memberType!=null)
             {
-                discount=totalF*0.05;
+                totalF += facilities.get(i).getPrice() * ((getDiscount(facilities.get(i).getFacility_type())) / 100);
             }
         }
-        total+=totalF;
+        double discount=totalF;
+
+
         for(int i=0;i<rooms.size();i++)
         {
             billHtml+="<tr>\n" +
@@ -147,6 +143,17 @@ public class Bill {
     {
 
         return billHtml;
+    }
+    private  double getDiscount(String facility)
+    {
+        for(int i=0;i<discount.size();i++)
+        {
+            if(discount.get(i).getFacilityName().compareTo(facility)==0)
+            {
+                return discount.get(i).getDiscount();
+            }
+        }
+        return 0;
     }
 
 

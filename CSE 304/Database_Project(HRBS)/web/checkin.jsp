@@ -20,7 +20,8 @@
 
 <%
     String designation= (String) session.getAttribute(LogIn.sessionDataName2);
-    if(designation.compareTo("RECEPTIONIST")==0)
+
+    if((designation!=null)&&(designation.compareTo("RECEPTIONIST")==0))
     {
         String  name= (String) session.getAttribute(LogIn.sessionDataName1);
         if(name!=null)

@@ -30,9 +30,11 @@ public class ChangePassword extends HttpServlet {
             database.closeConnection();
             if(update!=0)
             {
-                session.removeAttribute(LogIn.sessionDataName1);
+                /*session.removeAttribute(LogIn.sessionDataName1);
                 session.removeAttribute(LogIn.sessionDataName2);
-                session.removeAttribute(LogIn.sessionDataName3);
+                session.removeAttribute(LogIn.sessionDataName3);*/
+                session.invalidate();
+                session=request.getSession();
                 session.setAttribute(SessionDataname,"Password has been chaged !!!");
                 RequestDispatcher rd=request.getRequestDispatcher("/LogIn.jsp");
                 rd.forward(request,response);

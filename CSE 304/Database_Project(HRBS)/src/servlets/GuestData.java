@@ -47,7 +47,7 @@ public class GuestData extends HttpServlet {
         String  df= (String) session.getAttribute(RoomSearch.sessionDataName2);
         String dt=(String) session.getAttribute(RoomSearch.sessionDataName3);
         int [] rooms= (int[]) session.getAttribute(Booking.sessionDataName);
-        if(rooms!=null)
+        if((rooms!=null)&&(db.isPossible(df,dt,rooms)))
         {
             int BOOKINGID = db.bookRoom(df, dt, guestId);
             if (BOOKINGID != DBconnection.SQL_ERROR) {
@@ -64,7 +64,7 @@ public class GuestData extends HttpServlet {
             int[] facility_id = (int[]) session.getAttribute(BookingWithFacility.sessionDataName1);
 
         String facility_date= (String) session.getAttribute(WithFacility.sessionDataName3);
-        if((facility_date!=null))
+        if((facility_date!=null)&&(db.isPossible(facility_date,facility_id)))
         {
             int Facility_booking=db.bookFacility(facility_date,guestId);
              if(db.updateFacilityBook(facility_id,Facility_booking))

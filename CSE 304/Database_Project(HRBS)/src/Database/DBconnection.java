@@ -1,6 +1,7 @@
 package Database;
 
 import Utility.Facility;
+import Utility.Rate;
 import Utility.Room;
 import com.sun.org.apache.regexp.internal.RE;
 import org.omg.CORBA.PUBLIC_MEMBER;
@@ -108,7 +109,64 @@ public class DBconnection {
         return  arrayList;
 
     }
+    public boolean isPossible(String df,int [] facility)
+    {
+        PreparedStatement statement=null;
+        ArrayList<Integer> result=new ArrayList<>();
+        String sql="SELECT FACILITY_ID FROM FACILITY WHERE "+
+                " FACILITY_ID NOT IN (SELECT FACILITY_ID FROM FACILITY_BOOKING WHERE BOOKING_ID IN(SELECT  BOOKING_ID FROM BOOKING WHERE DATE_FROM =TO_DATE('"+df+"','YYYY-MM-DD')))";
 
+        try {
+            statement=conn.prepareStatement(sql);
+            ResultSet rs=statement.executeQuery();
+
+            for(int i=0;rs.next();i++)
+            {
+                result.add(rs.getInt("FACILITY_ID"));
+            }
+            for(int i=0;i<facility.length;i++)
+            {
+                if(!(result.contains(facility[i])))
+                {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  true;
+    }
+    public boolean isPossible(String df,String dt,int[] rooms)
+    {
+
+        PreparedStatement statement=null;
+        ArrayList<Integer> query=new ArrayList<>();
+        String sql="SELECT ROOM_NO FROM ROOM WHERE " +
+                " ROOM_NO NOT IN (SELECT  ROOM_NO FROM ROOM_BOOKING WHERE BOOKING_ID IN(SELECT BOOKING_ID FROM BOOKING WHERE(DATE_FROM = TO_DATE ('"+df+"' , 'YYYY-MM-DD')AND DATE_TO = TO_DATE ('"+dt+"' , 'YYYY-MM-DD'))" +
+                "OR(DATE_FROM BETWEEN TO_DATE ('"+df+"' , 'YYYY-MM-DD')AND TO_DATE ('"+dt+"' , 'YYYY-MM-DD'))OR (DATE_TO BETWEEN TO_DATE ('"+df+"' , 'YYYY-MM-DD')" +
+                "AND TO_DATE ('"+dt+"' , 'YYYY-MM-DD'))))";
+        try {
+            statement=conn.prepareStatement(sql);
+            ResultSet rs=statement.executeQuery();
+
+            for(int i=0;rs.next();i++)
+            {
+                query.add(rs.getInt("ROOM_NO"));
+            }
+            for(int i=0;i<rooms.length;i++)
+            {
+                if(!(query.contains(rooms[i])))
+                {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  true;
+
+
+    }
     public ArrayList<Room> getRoomList(String sp, String  cap, String ac, String wifi, String pf, String pt, String  df, String  dt)
     {
         ArrayList<Room> room=new ArrayList<>();
@@ -567,6 +625,24 @@ public class DBconnection {
             e.printStackTrace();
         }
         return update;
+
+    }
+    public  ArrayList<Rate> getdiscountPolicy(String  memberType)
+    {
+        PreparedStatement statement=null;
+        ArrayList<Rate> data=new ArrayList<>();
+        String sql="SELECT * FROM DISCOUNT WHERE DISCOUNT_MEMBER_TYPE = '"+memberType+"'";
+        try {
+            statement=conn.prepareStatement(sql);
+            ResultSet rs=statement.executeQuery();
+            for(;rs.next();)
+            {
+                data.add(new Rate(rs.getString("DISCOUNT_FACILITY_TYPE"),rs.getDouble("DISCOUNT_RATE")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  data;
 
     }
 

@@ -42,10 +42,11 @@ public class CheckIn extends HttpServlet {
                 if(activity.compareTo("LOG_OUT")==0)
                 {
                     HttpSession session=request.getSession();
-                    session.removeAttribute(LogIn.sessionDataName1);
+                    session.invalidate();
+                    /*session.removeAttribute(LogIn.sessionDataName1);
                     session.removeAttribute(LogIn.sessionDataName2);
                     session.removeAttribute(LogIn.sessionDataName3);
-                    session.removeAttribute(ChangePassword.SessionDataname);
+                    session.removeAttribute(ChangePassword.SessionDataname);*/
 
                     RequestDispatcher rd=request.getRequestDispatcher("/LogIn.jsp");
                     rd.forward(request,response);

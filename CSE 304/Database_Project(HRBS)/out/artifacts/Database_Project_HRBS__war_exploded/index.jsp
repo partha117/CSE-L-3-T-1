@@ -23,7 +23,8 @@
     <form method="post" action="CalculateBill.do">
     <%
         String designation= (String) session.getAttribute(LogIn.sessionDataName2);
-        if(designation.compareTo("ACCOUNTANT")==0)
+
+        if((designation!=null)&&(designation.compareTo("ACCOUNTANT")==0))
         {
             String  name= (String) session.getAttribute(LogIn.sessionDataName1);
             if(name!=null)
