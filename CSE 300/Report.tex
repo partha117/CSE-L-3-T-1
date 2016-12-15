@@ -1,4 +1,4 @@
-\documentclass[10pt]{report}
+\documentclass{report}
 \usepackage{enumerate}
 \usepackage{amsmath}
 \usepackage{multirow}
@@ -79,6 +79,9 @@ name/.code                 =  {\def\piechartthreedname{#1}}}
 \end{scope}
 }
 \begin{document}
+\tableofcontents
+\listoffigures
+\listoftables
 \chapter{A summary of the approaches}
 ~~In the proposed system by wu et all  we find a task scheduling algorithm by based on Qos driven in cloud computing. One of the challenges posed by cloud applications is Quality-of-Service (QoS) management, which is the problem of allocating resources to the application to guarantee a service level along dimensions such as performance, availability and reliability. In their paper, they have proposed an algorithm to compute priority based on special attribute of task. Moreover it sorts the tasks according to their priority .As the performance is the main issue the algorithm calculates the completion of each task .Then it schedules each task according to priority as well as completion time.\cite{Wu}\\\\
 \verb|  |Jhang et all proposed a system that works on the  genetic algorithm. The proposed system  considers users satisfaction and the availability of virtual machines. The genetic function in the system iterates to find the best possible task schedule.\cite{Jhang}\\\\
@@ -139,10 +142,12 @@ A description of the evaluation criteria are:
 \centering
         \small
         \setlength\tabcolsep{1pt}
+        
 \rotatebox{90}{
+
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \hline
- Papers Parameters&  Makespan & Fairness & Optimization &\shortstack[l]{ Energy\\Consumption} & \shortstack[l]{Execution\\Time} & \shortstack[l]{Load\\Balancing} & \shortstack[l]{User\\Satisfaction} & Deadline \\ \hline
+ Papers Parameters&  Makespan & Fairness & Optimization &\shortstack[l]{ Energy\\Consumption} & \shortstack[r]{Execution\\Time} & \shortstack[l]{Load\\Balancing} & \shortstack[l]{User\\Satisfaction} & Deadline \\ \hline
  \shortstack[l]{\\A game-theory approach\\ for job scheduling \\ in networked manufacturing} & \checkmark & \xmark &\xmark  & \xmark &\xmark  & \xmark & \xmark & \xmark \\ \hline
 \shortstack[l]{\\Non-cooperative games \\on multi-dimensional\\ resource allocation} & \xmark & \xmark & \xmark & \xmark & \xmark & \checkmark & \xmark & \xmark \\ \hline
 \shortstack[l]{\\A game-theoretic method of\\ fair resource allocation\\ for cloud computing services}& \xmark & \checkmark & \checkmark & \xmark &\xmark  & \xmark & \xmark & \xmark \\ \hline
@@ -153,15 +158,16 @@ A description of the evaluation criteria are:
 \shortstack[l]{\\Dynamic job scheduling\\ in cloud computing\\ based on horizontal load balancing} &\xmark  &\xmark  &\xmark  & \xmark & \xmark & \checkmark &\xmark  & \xmark \\ \hline
 \shortstack[l]{\\Bees Life Algorithm for \\job scheduling in\\ cloud computing} & \checkmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \\ \hline
 \shortstack[l]{\\Queue based Job Scheduling \\algorithm for Cloud computing} & \xmark & \xmark & \xmark & \xmark & \checkmark & \xmark & \xmark & \xmark \\ \hline
-\shortstack[l]{\\Using Game Theory for\\ Scheduling Tasks on\\ Multi-Core Processors for Simultaneous
+\shortstack[l]{\\Using Game Theory for\\ Scheduling Tasks on\\ Multi-Core Processors\\ for Simultaneous
 Optimization \\of Performance and Energy} &\checkmark  & \xmark & \xmark & \checkmark & \xmark & \xmark & \xmark & \xmark \\ \hline
 \shortstack[l]{\\A Non-Cooperative Game \\Model for Reliability-Based\\ Task Scheduling in Cloud
 Computing} & \xmark & \checkmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \\ \hline
 \end{tabular}
 }
+\caption{Scheduling parameters considered by existing algorithms}
 \end{table}
 \chapter{Findings}
- The findings are the 
+ In the papers  authors have found some interesting breakthrough in the field of cloud computing>findings like the inter relation of parameters will help the enthusiasts in this field to choose the correct parameter to cover.Findings are briefly explained as follows:
  \begin{enumerate}
  \item \textbf{	Aumann equilibrium supremacy:} For a large number of player in the cloud the aumann equilibrium provides a far more optimized scheduling then nash equilibrium.
 \item \textbf{Final Solution point:} For non co-operative game theory Nash equilibrium is the final solution point. There is nothing like final solution point in Co-operative game theory .The authors have recommended some of techniques like Pareto optimality, Pareto Efficiency, co-ordination failure for  finding solution in the scenario of co operative game theory.
@@ -171,13 +177,14 @@ Computing} & \xmark & \checkmark & \xmark & \xmark & \xmark & \xmark & \xmark & 
  \end{enumerate}
  
 \chapter{Drawback}
-\verb|  |In that paper authors, have simply state what the authors of the paper they have covered has done or their main objective. But they have not provided any type of proof or cause why the proposed system is bad or good.\\
+It seems the paper lacks clarification on some topics.If the authors make their position more transparent and authentic that would be excellent.\\\\
+\verb|  |In that paper authors, have simply state what the authors\footnote{The authors of the papers they have covered} of the paper they have covered has done or their main objective. But they have not provided any type of proof or cause why the proposed system is bad or good.\\
 \verb|  |Authors have selected many parameters for comparison of approaches but they have not provided any reason why they have selected those parameters.\\
-\verb|  |In the Paper The authors have stated that finish time is the main drawback for algorithms but they have not provided any time of cause or proof supporting their statement. 
+\verb|  |In the paper The authors have stated that finish time is the main drawback for algorithms but they have not provided any time of cause or proof supporting their statement. \\
 \verb|  |Later they have quoted a paper that have stated that further improvement is possible beyond nash equilibrium using Particle swarm optimization(PSO), Ant colony optimization(ACO), Simulated Annealing(SA). But there are not reference of that paper for readers. \\
 \verb|  |The authors also recommend some further work in this field. Like most of the paper covered in this paper are covering one or two parameters so a solution covering all the parameters may be a considered a good task and different approach has different drawbacks so a combination of all the positive traits may also be considered an excellent task in this field. If there were any definite list of drawbacks of parameter authors provided that would be easy for enthusiast for future work in this field.
 \chapter{Conclusion}
-
+In cloud environment job scheduling is considered an important task.There are many job scheduling algorithm for cloud is available with different positive traits and feature.A comparison  or survey in this field is necessary to find the scope or future direction in this field.In that context the paper is very useful and informative for the enthusiasts in this field.
 \bibliographystyle{plain}
 \bibliography{report}
 \end{document}
