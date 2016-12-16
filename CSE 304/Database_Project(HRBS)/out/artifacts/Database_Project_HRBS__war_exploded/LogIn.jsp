@@ -40,23 +40,31 @@
                 if(name!=null)
                 {
                     String designation= (String) session.getAttribute(LogIn.sessionDataName2);
-                    if(designation.compareTo("ACCOUNTANT")==0)
+                    if(designation.toUpperCase().compareTo("ACCOUNTANT")==0)
                     {
                         RequestDispatcher rd=request.getRequestDispatcher("/index.jsp");
                         rd.forward(request,response);
                     }
-                    else if(designation.compareTo("RECEPTIONIST")==0)
+                    else if(designation.toUpperCase().compareTo("RECEPTIONIST")==0)
                     {
                         RequestDispatcher rd=request.getRequestDispatcher("/checkin.jsp");
                         rd.forward(request,response);
                     }
-                    else if(designation.compareTo("MAINTENANCE MANAGER")==0)
+                    else if(designation.toUpperCase().compareTo("MAINTENANCE MANAGER")==0)
                     {
+
+                    }
+                    else if(designation.toUpperCase().compareTo("MANAGER")==0)
+                    {
+
+                        RequestDispatcher rd=request.getRequestDispatcher("/employee.jsp");
+                        rd.forward(request,response);
 
                     }
                 }
                 if(message!=null)
                 {
+                    session.removeAttribute(ChangePassword.SessionDataname);
                     out.println("<h3>"+message+"</h3>");
                 }
 

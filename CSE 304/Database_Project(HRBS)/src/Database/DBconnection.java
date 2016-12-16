@@ -63,18 +63,19 @@ public class DBconnection {
 
 
     }
-    public boolean insertEmployee(String first_name,String last_name,String department,String  designation,String contact,String email)
+    public boolean insertEmployee(String first_name,String last_name,String department,String  designation,String contact,String email,String password)
     {
 
         PreparedStatement statement= null;
         try {
-            statement = conn.prepareStatement("insert into EMPLOYEE values(EMPLOYEE_ID_SEQ.NEXTVAL,?,?,?,?,?,?)");
+            statement = conn.prepareStatement("insert into EMPLOYEE values(EMPLOYEE_ID_SEQ.NEXTVAL,?,?,?,?,?,?,?)");
             statement.setString(1,email);
             statement.setString(2,contact);
             statement.setString(3,first_name);
             statement.setString(4,last_name);
             statement.setString(5,department);
             statement.setString(6,designation);
+            statement.setString(7,password);
             int state=statement.executeUpdate();
             if(state==1)
             {
@@ -645,6 +646,7 @@ public class DBconnection {
         return  data;
 
     }
+
 
 }
 

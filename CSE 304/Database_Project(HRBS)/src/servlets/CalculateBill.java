@@ -41,7 +41,7 @@ public class CalculateBill extends HttpServlet {
                     ArrayList<Facility> facilities = database.getAllFacility(Integer.parseInt(guestId));
                     ArrayList<Room> rooms = database.getAllRoom(Integer.parseInt(guestId));
                     String member = database.memberType(Integer.parseInt(guestId));
-                    ArrayList<Rate> data;
+                    ArrayList<Rate> data=null;
                     if(member!=null)
                     {
                         data=database.getdiscountPolicy(member);
