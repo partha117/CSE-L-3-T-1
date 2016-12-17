@@ -117,7 +117,8 @@
             </div>
             <br>
             <%
-                if(session.getAttribute(BookingWithFacility.sessionDataName1)!=null)
+                int nFacility[]= (int[]) session.getAttribute(BookingWithFacility.sessionDataName1);
+                if((nFacility!=null)&&(nFacility.length!=0))
                 {
                     out.println("<div class=\"row\">\n" +
                             "                <div class=\"col-md-2\">\n" +
@@ -135,7 +136,8 @@
             <br>
         </div>
         <%
-            if(session.getAttribute(Booking.sessionDataName)!=null)
+            int nRoom[]= (int[]) session.getAttribute(Booking.sessionDataName);
+            if((nRoom!=null)&&(nRoom.length!=0))
             {
                 out.println("\n" +
                         "        <div class=\"row\">\n" +

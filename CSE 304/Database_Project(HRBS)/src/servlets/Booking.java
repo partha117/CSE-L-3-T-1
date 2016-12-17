@@ -25,33 +25,39 @@ public class Booking extends HttpServlet {
 
         HttpSession session = request.getSession();
         ArrayList<Room> array= (ArrayList<Room>) session.getAttribute("Room Data");
-        int room[]=new int[array.size()];
-        int k=0;
-        for(int i=0;i<array.size();i++)
-        {
-            String room_no=request.getParameter(String.valueOf(array.get(i).getRoom_no()));
-            if(room_no!=null)
-            {
-                room[k]=array.get(i).getRoom_no();
-                k++;
 
+            int room[] = new int[array.size()];
+            int k = 0;
+            for (int i = 0; i < array.size(); i++) {
+                String room_no = request.getParameter(String.valueOf(array.get(i).getRoom_no()));
+                if (room_no != null) {
+                    room[k] = array.get(i).getRoom_no();
+                    k++;
+
+                }
             }
-        }
-        int nRoom[]=new int[k];
-        for(int j=0;j<k;j++)
-        {
-            nRoom[j]=room[j];
-        }
-        session.setAttribute(sessionDataName,nRoom);
-        String st=request.getParameter("Facility");
-        if(st!=null)
-        {
+            int nRoom[] = new int[k];
+            for (int j = 0; j < k; j++) {
+                nRoom[j] = room[j];
+            }
+            session.setAttribute(sessionDataName, nRoom);
+            String st = request.getParameter("Facility");
+            if (st != null) {
 
-            RequestDispatcher rd=request.getRequestDispatcher("/bookFacility.jsp");
+                RequestDispatcher rd = request.getRequestDispatcher("/bookFacility.jsp");
+                rd.forward(request, response);
+            }
+            if(nRoom.length!=0) {
+                RequestDispatcher rd = request.getRequestDispatcher("/Guestinfo.jsp");
+                rd.forward(request, response);
+            }
+
+
+        else
+        {
+            RequestDispatcher rd = request.getRequestDispatcher("/Booking.jsp");
             rd.forward(request, response);
         }
-        RequestDispatcher rd=request.getRequestDispatcher("/Guestinfo.jsp");
-        rd.forward(request, response);
         /*String  room1=request.getParameter("107");
         String  room2=request.getParameter("069");
         PrintWriter out=response.getWriter();

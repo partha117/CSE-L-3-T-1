@@ -49,7 +49,7 @@ public class Room {
                 "                    <td>"+ speciality+"\n" +
                 "                    </td>\n" +
                 "\n" +
-                "                    <td> ৳"+ price+"\n" +
+                "                    <td> TK. "+ price+"\n" +
                 "                    </td>\n" +
                 "                </tr>";
         return st;

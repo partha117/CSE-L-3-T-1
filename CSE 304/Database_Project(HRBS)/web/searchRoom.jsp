@@ -28,6 +28,10 @@
         <div class="col-md-6">
             <h3> Room Search</h3>
         </div>
+        <div class="col-md-6">
+            <h3><a href="bookFacility.jsp">Facility Search</a></h3>
+
+        </div>
     </div>
     <br>
     <br>

@@ -20,18 +20,16 @@
     <div class="col-md-8 col-md-offset-2" style="margin-top: 5%; margin-bottom: 10%">
         <div class="row">
             <div class="col-md-6">
-                <h3>Book Facility</h3>
+                <h3>Facility Search</h3>
+            </div>
+
+            <div class="col-md-6">
+                <h3><a href="searchRoom.jsp">Room Search</a></h3>
+
             </div>
 
 
-            <div class="col-md-1 col-md-offset-1">
-                Date
-            </div>
 
-
-            <div class="col-md-4">
-                <input class="col-md-11 simpleinput" name="Date" type="date">
-            </div>
         </div>
         <br>
 

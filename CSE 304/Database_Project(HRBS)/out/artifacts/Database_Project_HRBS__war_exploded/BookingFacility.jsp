@@ -31,7 +31,7 @@
 <div class="col-md-8 col-md-offset-2" style="margin-top: 5%; margin-bottom: 10%">
     <div class="row">
         <div class="col-md-6">
-            <h3> Room Booking</h3>
+            <h3>Facility Booking</h3>
         </div>
     </div>
     <br>

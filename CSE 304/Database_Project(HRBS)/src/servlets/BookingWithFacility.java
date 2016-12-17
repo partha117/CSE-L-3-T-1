@@ -23,27 +23,34 @@ public class BookingWithFacility extends HttpServlet {
 
         HttpSession session = request.getSession();
         ArrayList<Facility> array= (ArrayList<Facility>) session.getAttribute(WithFacility.sessionDataName2);
-        int facility[]=new int[array.size()];
-        int k=0;
-        for( int i=0;i<array.size();i++)
-        {
-            String facility_id=request.getParameter(String.valueOf(array.get(i).getFacility_id()));
-            if(facility_id!=null)
-            {
-               facility[k]= Integer.parseInt(array.get(i).getFacility_id());
-                k++;
 
+            int facility[] = new int[array.size()];
+            int k = 0;
+            for (int i = 0; i < array.size(); i++) {
+                String facility_id = request.getParameter(String.valueOf(array.get(i).getFacility_id()));
+                if (facility_id != null) {
+                    facility[k] = Integer.parseInt(array.get(i).getFacility_id());
+                    k++;
+
+                }
             }
-        }
-        int nFacility[]=new int[k];
-        for(int j=0;j<k;j++)
-        {
-            nFacility[j]=facility[j];
-        }
+            int nFacility[] = new int[k];
+            for (int j = 0; j < k; j++) {
+                nFacility[j] = facility[j];
+            }
+            if(nFacility.length!=0) {
 
-        session.setAttribute(sessionDataName1,nFacility);
-        RequestDispatcher rd=request.getRequestDispatcher("/Guestinfo.jsp");
-        rd.forward(request, response);
+                session.setAttribute(sessionDataName1, nFacility);
+                RequestDispatcher rd = request.getRequestDispatcher("/Guestinfo.jsp");
+                rd.forward(request, response);
+            }
+            else
+            {
+
+                RequestDispatcher rd = request.getRequestDispatcher("/BookingFacility.jsp");
+                rd.forward(request, response);
+            }
+
 
 
     }
