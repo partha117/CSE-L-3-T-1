@@ -85,7 +85,16 @@
 
 
       <div class="col-md-4">
-        <input class="col-md-11 simpleinput" name="Payment Method" type="text">
+
+        <select name="Payment Method">
+          <option name="option1" value="CASH">Cash</option>
+          <option name="option2" value="VISA">Credit Card(VISA)</option>
+          <option name="option2" value="MASTER CARD">Credit Card(Master Card)</option>
+          <option name="option2" value="AMERICAN EXPRESS">Credit Card(American Express)</option>
+          <option name="option2" value="BKASH">BKASH</option>
+          <option name="option2" value="ROCKET">DBBL(ROCKET)</option>
+          <option name="option2" value="BANK CHECK">Bank Check</option>
+        </select>
       </div>
     </div>
     <br>

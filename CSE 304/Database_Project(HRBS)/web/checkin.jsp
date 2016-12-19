@@ -1,4 +1,6 @@
-<%@ page import="servlets.LogIn" %><%--
+<%@ page import="servlets.LogIn" %>
+<%@ page import="javax.print.DocFlavor" %>
+<%@ page import="servlets.CheckIn" %><%--
   Created by IntelliJ IDEA.
   User: ASUS
   Date: 15-Dec-16
@@ -112,6 +114,15 @@
     <div class="col-md-7">
         <button class="btn add-btn" style="float: right">Submit</button>
     </div>
+    <%
+        String message=(String)session.getAttribute(CheckIn.sessionDataName);
+        if(message!=null)
+        {
+            out.println("<h1>"+message+"</h1>");
+            session.removeAttribute(CheckIn.sessionDataName);
+        }
+
+    %>
 </div>
 
 </body>

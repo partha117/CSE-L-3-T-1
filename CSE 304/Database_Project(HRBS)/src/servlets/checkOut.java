@@ -17,6 +17,7 @@ import java.io.PrintWriter;
  */
 @WebServlet(name = "checkOut",urlPatterns = "/checkout.do")
 public class checkOut extends HttpServlet {
+    public  static  final String sessionDataName="MessageFromCheckOut";
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 
@@ -29,13 +30,16 @@ public class checkOut extends HttpServlet {
                 DBconnection database = new DBconnection();
                 int bill = database.getBillStatus(guestId);
                 PrintWriter out = response.getWriter();
+                HttpSession session=request.getSession();
                 if (bill != 0) {
-                    out.println("<h1> The guest has  " + bill + "payment pending" + "</h1>");
+                    session.setAttribute(sessionDataName,"Guest "+guestId+" has "+bill+" pending payment");
+
                 } else {
                     database.setRoomStatus(guestId);
-                    out.println("<h1> The guest is ready for checkout" +
-                            "" + "</h1>");
+                    session.setAttribute(sessionDataName,"Guest "+guestId+" is ready for checkout");
                 }
+                RequestDispatcher rd=request.getRequestDispatcher("/Checkout.jsp");
+                rd.forward(request,response);
             }
         }
         else

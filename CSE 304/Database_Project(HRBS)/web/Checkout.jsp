@@ -1,4 +1,5 @@
-<%@ page import="servlets.LogIn" %><%--
+<%@ page import="servlets.LogIn" %>
+<%@ page import="servlets.checkOut" %><%--
   Created by IntelliJ IDEA.
   User: ASUS
   Date: 18-Dec-16
@@ -110,6 +111,16 @@
         <div class="col-md-7">
             <button class="btn add-btn" style="float: right">Submit</button>
         </div>
+
+        <%
+            String message=(String)session.getAttribute(checkOut.sessionDataName);
+            if(message!=null)
+            {
+                out.println("<h1>"+message+"</h1>");
+                session.removeAttribute(checkOut.sessionDataName);
+            }
+
+        %>
     </div>
 
     </body>

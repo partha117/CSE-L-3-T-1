@@ -37,6 +37,7 @@
             <%
                 String  name= (String) session.getAttribute(LogIn.sessionDataName1);
                 String message=(String )session.getAttribute(ChangePassword.SessionDataname);
+                String alert=(String )session.getAttribute(LogIn.sessionDataName4);
                 if(name!=null)
                 {
                     String designation= (String) session.getAttribute(LogIn.sessionDataName2);
@@ -67,6 +68,7 @@
                     session.removeAttribute(ChangePassword.SessionDataname);
                     out.println("<h3>"+message+"</h3>");
                 }
+
 
             %>
         <div class="row">
@@ -102,7 +104,20 @@
         <br>
         <div class="col-md-12">
             <button class="btn add-btn" style="float: right">Submit</button>
-        </div>
+        </div><br><br>
+
+                <%
+                    if(alert!=null)
+                    {
+                        out.println("<div class=\"alert alert-danger\">\n" +
+"            <strong>");
+                        out.print("<h1>"+alert+"</h1>");
+                        session.removeAttribute(LogIn.sessionDataName4);
+                        out.println("  </strong>\n" +
+                                "        </div>");
+                    }
+                %>
+
     </div>
 </form>
 </body>

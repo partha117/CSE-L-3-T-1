@@ -27,7 +27,7 @@
         if((designation!=null)&&(designation.toUpperCase().compareTo("ACCOUNTANT")==0))
         {
             String  name= (String) session.getAttribute(LogIn.sessionDataName1);
-            String message=(String )session.getAttribute(CalculateBill.sessionDataName3);
+
             if(name!=null)
             {
                     String html = "<div class=\"col-md-offset-0\">\n" +
@@ -37,12 +37,7 @@
                     "\t\t\t<br>";
                 out.println(html);
             }
-            if(message!=null)
-            {
-              out.println("<h1>"+message+"</h1>");
-              session.removeAttribute(CalculateBill.sessionDataName3);
 
-            }
         }
         else
         {
@@ -90,7 +85,16 @@
 
 
       <div class="col-md-4">
-        <input class="col-md-11 simpleinput" name="Payment Method" type="text">
+
+        <select name="Payment Method">
+          <option name="option1" value="CASH">Cash</option>
+          <option name="option2" value="VISA">Credit Card(VISA)</option>
+          <option name="option2" value="MASTER CARD">Credit Card(Master Card)</option>
+          <option name="option2" value="AMERICAN EXPRESS">Credit Card(American Express)</option>
+          <option name="option2" value="BKASH">BKASH</option>
+          <option name="option2" value="ROCKET">DBBL(ROCKET)</option>
+          <option name="option2" value="BANK CHECK">Bank Check</option>
+        </select>
       </div>
     </div>
     <br>
@@ -169,6 +173,7 @@
                     out.close();
 
             }
+
 
         %>
 

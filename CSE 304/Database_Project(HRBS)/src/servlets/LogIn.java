@@ -21,6 +21,7 @@ public class LogIn extends HttpServlet {
     public  static  final  String sessionDataName1="LoggedInAs";
     public  static  final  String sessionDataName2="designation";
     public  static  final  String sessionDataName3="Employee id";
+    public  static  final  String sessionDataName4="Alert from Log in";
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userName=request.getParameter("Username");
         String  password=request.getParameter("Password");
@@ -58,6 +59,13 @@ public class LogIn extends HttpServlet {
                 rd.forward(request,response);
 
             }
+        }
+        else
+        {
+            session.setAttribute(sessionDataName4,"!!! The username or password you have entered is not correct !!!");
+            RequestDispatcher rd=request.getRequestDispatcher("/LogIn.jsp");
+            rd.forward(request,response
+            );
         }
 
 

@@ -17,6 +17,7 @@ import java.io.PrintWriter;
  */
 @WebServlet(name = "CheckIn",urlPatterns = "/CheckIn.do")
 public class CheckIn extends HttpServlet {
+    public  static  final String sessionDataName="MessageFromCheckIn";
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String task=request.getParameter("Go");
@@ -27,11 +28,16 @@ public class CheckIn extends HttpServlet {
                 DBconnection database = new DBconnection();
                 int update = database.changeRoomStatus(guestId);
                 PrintWriter out = response.getWriter();
+                HttpSession session=request.getSession();
                 if (update != 0) {
-                    out.println("<h1> The guest has booked " + update + "room(s).And they are Ready" + "</h1>");
+                    session.setAttribute(sessionDataName," The guest has booked "+update+" room(s).And they are ready");
+
                 } else {
-                    out.println("<h1> The guest has not booked any room</h1>");
+                    session.setAttribute(sessionDataName,"The guest has not booked any room");
+
                 }
+                RequestDispatcher rd=request.getRequestDispatcher("/checkin.jsp");
+                rd.forward(request,response);
             }
         }
         else
