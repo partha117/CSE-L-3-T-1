@@ -10,3 +10,8 @@
 .table-no-border th, .table-no-border td { 
   border-top: none !important; 
 }
+.oneline{
+  white-space:nowrap;
+
+}
+

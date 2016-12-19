@@ -55,18 +55,18 @@
 
 %>
 
-<div class="row">
-    <div class="col-md-offset-9">
-        <select name="ACTIVITY">
-            <option name="option1" value="LOG_OUT">Log out</option>
-            <option name="option2" value="CHANGE_PASSWORD">Change Password</option>
-        </select>
-    </div>
-    <div>
-        <input class="btn btn-sm btn add-btn col-md-offset-11"  type="submit" value="Go" name="Go">
-    </div>
+    <div class="row">
+        <div class="col-md-offset-7 col-md-2" >
+            <select name="ACTIVITY" style="float: right">
+                <option name="option1" value="LOG_OUT">Log out</option>
+                <option name="option2" value="CHANGE_PASSWORD">Change Password</option>
+            </select>
+        </div>
+        <div class="col-md-1" style="float: left">
+            <input class="btn btn-sm btn add-btn col-md-offset-11" type="submit" value="Go" name="Go" >
+        </div>
 
-</div>
+    </div>
 <div class="col-md-8 col-md-offset-2" style="margin-top: 5%; margin-bottom: 10%">
     <div class="row">
         <div class="col-md-6">

@@ -24,6 +24,7 @@ public class CalculateBill extends HttpServlet {
 
     public  static  final  String sessionDataName="BILL";
     public  static  final  String sessionDataName2="guest_id";
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 
@@ -54,7 +55,8 @@ public class CalculateBill extends HttpServlet {
                     RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
                     rd.forward(request, response);
                 }
-            } else {
+            }
+            else {
                 String refundable = request.getParameter("refundable");
                 if (refundable == null) {
                     refundable = "NO";
@@ -67,6 +69,10 @@ public class CalculateBill extends HttpServlet {
                 database.updatePayState(guest_id);
                 database.insertBill(refundable, guest_id, employee_id, amount, payment);
                 database.closeConnection();
+                session.removeAttribute(sessionDataName);
+
+                RequestDispatcher rd=request.getRequestDispatcher("/BillDone.jsp");
+                rd.forward(request,response);
 
 
             }

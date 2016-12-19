@@ -27,6 +27,7 @@
         if((designation!=null)&&(designation.toUpperCase().compareTo("ACCOUNTANT")==0))
         {
             String  name= (String) session.getAttribute(LogIn.sessionDataName1);
+            String message=(String )session.getAttribute(CalculateBill.sessionDataName3);
             if(name!=null)
             {
                     String html = "<div class=\"col-md-offset-0\">\n" +
@@ -35,6 +36,12 @@
                     "\t\t\t<br>\n" +
                     "\t\t\t<br>";
                 out.println(html);
+            }
+            if(message!=null)
+            {
+              out.println("<h1>"+message+"</h1>");
+              session.removeAttribute(CalculateBill.sessionDataName3);
+
             }
         }
         else
@@ -45,14 +52,14 @@
 
     %>
       <div class="row">
-        <div class="col-md-offset-9">
-          <select name="ACTIVITY">
+        <div class="col-md-offset-7 col-md-2" >
+          <select name="ACTIVITY" style="float: right">
             <option name="option1" value="LOG_OUT">Log out</option>
             <option name="option2" value="CHANGE_PASSWORD">Change Password</option>
           </select>
         </div>
-        <div>
-          <input class="btn btn-sm btn add-btn col-md-offset-11"  type="submit" value="Go" name="Go">
+        <div class="col-md-1" style="float: left">
+          <input class="btn btn-sm btn add-btn col-md-offset-11" type="submit" value="Go" name="Go" >
         </div>
 
       </div>

@@ -42,15 +42,17 @@
 %>
 
 <div class="row">
-    <div class="col-md-offset-9">
-        <select name="ACTIVITY">
+    <div class="col-md-offset-7 col-md-2" >
+        <select name="ACTIVITY" style="float: right">
             <option name="option1" value="LOG_OUT">Log out</option>
             <option name="option2" value="CHANGE_PASSWORD">Change Password</option>
         </select>
     </div>
-    <div>
-        <input class="btn btn-sm btn add-btn col-md-offset-11"  type="submit" value="Go" name="Go">
+    <div class="col-md-1" style="float: left">
+        <input class="btn btn-sm btn add-btn col-md-offset-11" type="submit" value="Go" name="Go" >
     </div>
+
+</div>
 
 </div>
 <div class="col-md-8 col-md-offset-2" style="margin-top: 5%; margin-bottom: 10%">
@@ -58,16 +60,24 @@
         <div class="col-md-6">
             <h3>Check In</h3>
         </div>
+        <div class="col-md-6">
+            <h3><a href="Checkout.jsp">Check Out</a></h3>
+
+            <div class="row">
+                <div class="col-md-3">
+                    Date
+                </div>
 
 
-        <div class="col-md-1 col-md-offset-1">
-            Date
+                <div class="col-md-9">
+                    <input class="col-md-11 simpleinput" name="Date" type="date">
+                </div>
+            </div>
+
         </div>
 
 
-        <div class="col-md-4">
-            <input class="col-md-11 simpleinput" name="Date" type="date">
-        </div>
+
     </div>
     <br>
 
@@ -105,4 +115,5 @@
 </div>
 
 </body>
+</form>
 </html>

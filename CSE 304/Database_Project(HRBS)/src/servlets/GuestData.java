@@ -2,6 +2,7 @@ package servlets;
 
 import Database.DBconnection;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +17,9 @@ import java.io.PrintWriter;
  */
 @WebServlet(name = "GuestData",urlPatterns ="/guestdata.do")
 public class GuestData extends HttpServlet {
+    public static final String sessionDataName="GUEST_ID";
+    public static final String sessionDataName1="RoomNum";
+    public static final String sessionDataName2="FacilityNum";
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String guestFirstName=request.getParameter("FirstName");
@@ -33,7 +37,7 @@ public class GuestData extends HttpServlet {
 
         DBconnection db=new DBconnection();
         int guestId;
-        if(guestMemberNo==null)
+        if(guestMemberNo.length()==0)
         {
             guestId=db.insertGuest(guestFirstName,guestLastName,guestAddress,guestContact,guestNID,guestPassport,guestPerson);
         }
@@ -43,10 +47,11 @@ public class GuestData extends HttpServlet {
         }
 
         HttpSession session=request.getSession();
-        session.setAttribute("GUEST_ID",guestId);
+        session.setAttribute(sessionDataName,guestId);
         String  df= (String) session.getAttribute(RoomSearch.sessionDataName2);
         String dt=(String) session.getAttribute(RoomSearch.sessionDataName3);
         int [] rooms= (int[]) session.getAttribute(Booking.sessionDataName);
+        //session.setAttribute();
         if((rooms!=null)&&(db.isPossible(df,dt,rooms)))
         {
             int BOOKINGID = db.bookRoom(df, dt, guestId);
@@ -85,6 +90,8 @@ public class GuestData extends HttpServlet {
 
 
         db.closeConnection();
+        RequestDispatcher rd=request.getRequestDispatcher("/Complete.jsp");
+        rd.forward(request,response);
 
     }
 
